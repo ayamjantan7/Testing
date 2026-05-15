@@ -397,7 +397,7 @@
             color: #7e9fc7;
         }
 
-        /* MODAL EDIT (MEMBESAR SAAT DIKLIK) */
+        /* MODAL VIEW (HANYA LIHAT, TIDAK BISA EDIT LANGSUNG) */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -429,7 +429,83 @@
         .modal-overlay.active .modal-card {
             transform: scale(1);
         }
-        .modal-card input, .modal-card textarea, .modal-card select {
+        .modal-view-content {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            word-break: break-word;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .modal-view-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+        }
+        .modal-view-meta {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .btn-edit-modal {
+            background: linear-gradient(95deg, #0f4c5f, #0b7b8c);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-close-modal {
+            background: rgba(255, 70, 70, 0.2);
+            border: 1px solid #ff6b5c;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            color: #ff8c7a;
+            cursor: pointer;
+        }
+
+        /* MODAL EDIT (TERPISAH, MUNCUL SETELAH KLIK TOMBOL EDIT) */
+        .edit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2100;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .edit-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .edit-modal-card {
+            background: linear-gradient(145deg, #111827, #0A0F1A);
+            border-radius: 2rem;
+            width: 90%;
+            max-width: 550px;
+            padding: 2rem;
+            border: 1px solid var(--pink);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 107, 157, 0.2);
+            transform: scale(0.9);
+            transition: 0.3s;
+        }
+        .edit-modal-overlay.active .edit-modal-card {
+            transform: scale(1);
+        }
+        .edit-modal-card input, .edit-modal-card textarea, .edit-modal-card select {
             width: 100%;
             background: #0a1022;
             border: 1px solid #2c4c6e;
@@ -438,11 +514,6 @@
             margin-bottom: 1rem;
             color: white;
             font-family: inherit;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
         }
         .btn-save-edit {
             background: linear-gradient(95deg, #0f4c5f, #0b7b8c);
@@ -565,9 +636,22 @@
     </div>
 </div>
 
-<!-- MODAL EDIT -->
-<div id="editModalOverlay" class="modal-overlay">
+<!-- MODAL VIEW (HANYA LIHAT, TIDAK BISA EDIT LANGSUNG) -->
+<div id="viewModalOverlay" class="modal-overlay">
     <div class="modal-card">
+        <div id="viewModalTitle" class="modal-view-title"></div>
+        <div id="viewModalMeta" class="modal-view-meta"></div>
+        <div id="viewModalContent" class="modal-view-content"></div>
+        <div class="modal-actions">
+            <button id="closeViewModalButton" class="btn-close-modal"><i class="fas fa-times"></i> Close</button>
+            <button id="openEditFromViewButton" class="btn-edit-modal"><i class="fas fa-pen"></i> Edit</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT (TERPISAH, MUNCUL SAAT KLIK TOMBOL EDIT) -->
+<div id="editModalOverlay" class="edit-modal-overlay">
+    <div class="edit-modal-card">
         <h3 style="margin-bottom: 1rem;"><i class="fas fa-pen"></i> Edit Artifact</h3>
         <input type="text" id="editTitleInput" placeholder="Title">
         <select id="editTypeSelect">
@@ -577,8 +661,8 @@
         </select>
         <textarea id="editValueInput" rows="4" placeholder="Content"></textarea>
         <div class="modal-actions">
-            <button id="cancelEditButton" class="btn-cancel-edit">Cancel</button>
-            <button id="confirmEditButton" class="btn-save-edit">Save Changes</button>
+            <button id="cancelEditButton" class="btn-cancel-edit"><i class="fas fa-times"></i> Cancel</button>
+            <button id="confirmEditButton" class="btn-save-edit"><i class="fas fa-save"></i> Save Changes</button>
         </div>
     </div>
 </div>
@@ -594,6 +678,7 @@
     let currentFolder = "All";
     let searchTerm = "";
     let typeFilter = "all";
+    let viewingItemId = null;
     let editingItemId = null;
 
     // ============== DOM ELEMENTS ==============
@@ -618,6 +703,16 @@
     const filterTypeSelect = document.getElementById('filterTypeSelect');
     const statsArea = document.getElementById('statsArea');
     const cardsGridContainer = document.getElementById('cardsGridContainer');
+    
+    // Modal View Elements
+    const viewModalOverlay = document.getElementById('viewModalOverlay');
+    const viewModalTitle = document.getElementById('viewModalTitle');
+    const viewModalMeta = document.getElementById('viewModalMeta');
+    const viewModalContent = document.getElementById('viewModalContent');
+    const closeViewModalButton = document.getElementById('closeViewModalButton');
+    const openEditFromViewButton = document.getElementById('openEditFromViewButton');
+    
+    // Modal Edit Elements
     const editModalOverlay = document.getElementById('editModalOverlay');
     const editTitleInput = document.getElementById('editTitleInput');
     const editTypeSelect = document.getElementById('editTypeSelect');
@@ -625,7 +720,7 @@
     const cancelEditButton = document.getElementById('cancelEditButton');
     const confirmEditButton = document.getElementById('confirmEditButton');
 
-    // ============== FALLING PARTICLES (HUJAN) ==============
+    // ============== FALLING PARTICLES ==============
     function createFallingParticle() {
         const container = document.getElementById('particleContainer');
         if (!container) return;
@@ -687,7 +782,7 @@
             items = JSON.parse(storedItems);
         } else {
             items = [
-                { id: Date.now() + 1, title: "Welcome to Nexus", type: "text", value: "Premium vault with edit & search functionality. Click on any card to edit!", folder: "All", createdAt: new Date().toLocaleString() },
+                { id: Date.now() + 1, title: "Welcome to Nexus", type: "text", value: "Premium vault with view & edit separated. Click on any card to view details, then click Edit button to modify.", folder: "All", createdAt: new Date().toLocaleString() },
                 { id: Date.now() + 2, title: "GitHub Resources", type: "link", value: "https://github.com", folder: "All", createdAt: new Date().toLocaleString() },
                 { id: Date.now() + 3, title: "AI Revolution", type: "idea", value: "Build a personal AI assistant with local LLM", folder: "All", createdAt: new Date().toLocaleString() }
             ];
@@ -813,11 +908,68 @@
             `;
             card.addEventListener('click', (e) => {
                 if (e.target.tagName !== 'A') {
-                    openEditModal(item.id);
+                    openViewModal(item.id);
                 }
             });
             cardsGridContainer.appendChild(card);
         });
+    }
+
+    // ============== VIEW MODAL (HANYA LIHAT) ==============
+    function openViewModal(itemId) {
+        const item = items.find(i => i.id === itemId);
+        if (!item) return;
+        viewingItemId = itemId;
+        
+        const icon = item.type === 'text' ? '📄' : (item.type === 'link' ? '🔗' : '⚡');
+        viewModalTitle.innerHTML = `${icon} ${escapeHtml(item.title)}`;
+        viewModalMeta.innerHTML = `<i class="far fa-folder"></i> ${item.folder === "All" ? 'General' : escapeHtml(item.folder)} • <i class="far fa-clock"></i> ${item.createdAt || 'just now'} • <span class="badge-type" style="background:#0f4c5f; padding:0.2rem 0.5rem;">${item.type}</span>`;
+        
+        let content = item.value;
+        if (item.type === 'link' && item.value.match(/^https?:\/\//)) {
+            content = `<a href="${item.value}" target="_blank" style="color: #5fd4ff;">${escapeHtml(item.value)}</a>`;
+        } else {
+            content = escapeHtml(item.value);
+        }
+        viewModalContent.innerHTML = content;
+        
+        viewModalOverlay.classList.add('active');
+    }
+
+    function closeViewModal() {
+        viewModalOverlay.classList.remove('active');
+        viewingItemId = null;
+    }
+
+    // ============== EDIT MODAL (TERPISAH) ==============
+    function openEditModal(itemId) {
+        const item = items.find(i => i.id === itemId);
+        if (!item) return;
+        editingItemId = itemId;
+        editTitleInput.value = item.title;
+        editTypeSelect.value = item.type;
+        editValueInput.value = item.value;
+        editModalOverlay.classList.add('active');
+    }
+
+    function closeEditModal() {
+        editModalOverlay.classList.remove('active');
+        editingItemId = null;
+    }
+
+    function saveEditChanges() {
+        if (!editingItemId) return;
+        const index = items.findIndex(i => i.id === editingItemId);
+        if (index !== -1) {
+            items[index].title = editTitleInput.value.trim();
+            items[index].type = editTypeSelect.value;
+            items[index].value = editValueInput.value.trim();
+            items[index].updatedAt = new Date().toLocaleString();
+            saveToLocalStorage();
+            renderCards();
+            closeEditModal();
+            closeViewModal();
+        }
     }
 
     // ============== CRUD OPERATIONS ==============
@@ -867,35 +1019,6 @@
         newFolderNameInput.value = '';
     }
 
-    function openEditModal(itemId) {
-        const item = items.find(i => i.id === itemId);
-        if (!item) return;
-        editingItemId = itemId;
-        editTitleInput.value = item.title;
-        editTypeSelect.value = item.type;
-        editValueInput.value = item.value;
-        editModalOverlay.classList.add('active');
-    }
-
-    function closeEditModal() {
-        editModalOverlay.classList.remove('active');
-        editingItemId = null;
-    }
-
-    function saveEditChanges() {
-        if (!editingItemId) return;
-        const index = items.findIndex(i => i.id === editingItemId);
-        if (index !== -1) {
-            items[index].title = editTitleInput.value.trim();
-            items[index].type = editTypeSelect.value;
-            items[index].value = editValueInput.value.trim();
-            items[index].updatedAt = new Date().toLocaleString();
-            saveToLocalStorage();
-            renderCards();
-            closeEditModal();
-        }
-    }
-
     // ============== LOGIN/LOGOUT ==============
     function attemptLogin() {
         const username = loginUsername.value.trim();
@@ -943,11 +1066,29 @@
         typeFilter = e.target.value;
         renderCards();
     });
-    cancelEditButton.addEventListener('click', closeEditModal);
-    confirmEditButton.addEventListener('click', saveEditChanges);
     loginPassword.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') attemptLogin();
     });
+    
+    // View Modal Events
+    closeViewModalButton.addEventListener('click', closeViewModal);
+    viewModalOverlay.addEventListener('click', (e) => {
+        if (e.target === viewModalOverlay) closeViewModal();
+    });
+    
+    // Tombol Edit di View Modal -> buka Edit Modal
+    openEditFromViewButton.addEventListener('click', () => {
+        if (viewingItemId) {
+            closeViewModal();
+            setTimeout(() => {
+                openEditModal(viewingItemId);
+            }, 200);
+        }
+    });
+    
+    // Edit Modal Events
+    cancelEditButton.addEventListener('click', closeEditModal);
+    confirmEditButton.addEventListener('click', saveEditChanges);
     editModalOverlay.addEventListener('click', (e) => {
         if (e.target === editModalOverlay) closeEditModal();
     });
