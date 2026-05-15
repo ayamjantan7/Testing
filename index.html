@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>LIMESTONE | Penyimpanan Digital dengan Folder & Pencarian</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <title>LIMESTONE | Artifact Vault — Esthetic Digital Storage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -14,691 +14,630 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 10% 20%, #0a0f1f, #03060c);
-            color: #eef5ff;
-            line-height: 1.5;
-            min-height: 100vh;
+            font-family: 'Space Grotesk', sans-serif;
+            background: #0A0A0F;
+            overflow-x: hidden;
         }
 
-        /* Login Page */
-        .login-container {
+        /* Animated Background */
+        .bg-orb {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(20, 30, 70, 0.4), transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 200, 200, 0.15), transparent 60%);
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .noise-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 30% 10%, #0a0f1f, #010101);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease, visibility 0.5s;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
         }
 
-        .login-card {
-            background: rgba(15, 25, 45, 0.75);
+        /* Login Container */
+        .login-wrapper {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
             backdrop-filter: blur(12px);
+            background: rgba(5, 5, 15, 0.85);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-panel {
+            background: rgba(20, 25, 45, 0.55);
+            backdrop-filter: blur(20px);
             border-radius: 2rem;
             padding: 2.5rem;
             width: 90%;
-            max-width: 400px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5), 0 0 20px rgba(0,255,255,0.2);
-            text-align: center;
+            max-width: 420px;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(0, 255, 255, 0.1) inset;
+            transform: translateY(0);
+            animation: floatGlow 4s ease-in-out infinite;
         }
 
-        .login-card h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, #aaffff, #2a9d8f);
+        @keyframes floatGlow {
+            0%, 100% { transform: translateY(0px); box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(0,255,255,0.1) inset; }
+            50% { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,255,255,0.3) inset; }
+        }
+
+        .login-header h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #FFFFFF, #88FFFF, #2A9D8F);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
-        .input-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #2a4c6e;
+        .input-glow {
+            background: rgba(5, 10, 25, 0.6);
+            border: 1px solid rgba(100, 200, 255, 0.3);
             border-radius: 1rem;
+            padding: 0.9rem 1.2rem;
+            width: 100%;
             color: white;
-            font-size: 1rem;
+            font-family: inherit;
+            transition: 0.2s;
         }
 
-        .input-group input:focus {
+        .input-glow:focus {
             outline: none;
             border-color: #0ff;
-            box-shadow: 0 0 8px #0ff;
+            box-shadow: 0 0 12px #0ff;
         }
 
         .login-btn {
-            background: linear-gradient(90deg, #0f2b3d, #0a4c5c);
+            background: linear-gradient(95deg, #0F2B3D, #0A4C5C);
             border: none;
             width: 100%;
-            padding: 0.9rem;
-            border-radius: 2rem;
-            font-weight: bold;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
             color: white;
             cursor: pointer;
+            transition: 0.3s;
         }
 
-        .error-msg {
-            color: #ff9e8f;
-            font-size: 0.8rem;
-            margin-top: 1rem;
-            display: none;
+        .login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px cyan;
+            background: linear-gradient(95deg, #1A4A6A, #0F7B8C);
         }
 
         /* Dashboard */
         .dashboard {
             display: none;
+            opacity: 0;
+            transition: opacity 0.7s;
         }
 
-        .navbar {
+        /* Glass Navigation */
+        .nav-glass {
+            position: sticky;
+            top: 20px;
+            margin: 20px 30px 0 30px;
+            background: rgba(10, 15, 30, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 3rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 5%;
-            background: rgba(5, 10, 22, 0.7);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,255,255,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 99;
+            z-index: 100;
             flex-wrap: wrap;
-            gap: 1rem;
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #c0ffff, #2a9d8f);
+        .logo-area {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #7FFFD4);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
-        .logout-btn {
-            background: rgba(255,70,70,0.2);
+        .logout-btn-neon {
+            background: rgba(255, 80, 80, 0.2);
             border: 1px solid #ff7b72;
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.4rem;
             border-radius: 2rem;
-            cursor: pointer;
-        }
-
-        /* Main Layout */
-        .main-container {
-            display: flex;
-            min-height: calc(100vh - 70px);
-        }
-
-        /* Sidebar Folder */
-        .sidebar {
-            width: 280px;
-            background: rgba(8, 15, 28, 0.6);
-            backdrop-filter: blur(8px);
-            border-right: 1px solid rgba(0,255,255,0.2);
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .sidebar h3 {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            color: #0ff;
-        }
-
-        .folder-list {
-            list-style: none;
-            margin-bottom: 1.5rem;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .folder-item {
-            padding: 0.7rem 0.8rem;
-            margin: 0.3rem 0;
-            border-radius: 0.8rem;
+            font-weight: 500;
             cursor: pointer;
             transition: 0.2s;
+        }
+
+        /* Layout 2 columns */
+        .app-layout {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Sidebar premium */
+        .premium-sidebar {
+            flex: 1.2;
+            min-width: 260px;
+            background: rgba(12, 18, 32, 0.5);
+            backdrop-filter: blur(12px);
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            height: fit-content;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6c8db0;
+            margin-bottom: 1rem;
+        }
+
+        .folder-tree {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+
+        .folder-node {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .folder-item:hover {
-            background: rgba(0, 255, 255, 0.1);
-        }
-
-        .folder-item.active {
-            background: rgba(0, 255, 255, 0.2);
-            border-left: 3px solid #0ff;
-        }
-
-        .folder-name {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .delete-folder {
-            background: none;
-            border: none;
-            color: #ff8a7a;
+            padding: 0.7rem 0.8rem;
+            margin: 0.3rem 0;
+            border-radius: 1rem;
             cursor: pointer;
-            font-size: 0.8rem;
-            opacity: 0.6;
+            transition: all 0.2s;
+            font-weight: 500;
         }
 
-        .delete-folder:hover {
-            opacity: 1;
+        .folder-node.active {
+            background: rgba(0, 255, 255, 0.2);
+            border-left: 3px solid cyan;
+            box-shadow: 0 2px 8px rgba(0,255,255,0.1);
         }
 
-        .add-folder {
+        .create-folder-input {
             display: flex;
             gap: 0.5rem;
             margin-top: 1rem;
         }
 
-        .add-folder input {
-            flex: 1;
-            background: #0f1a2a;
+        .create-folder-input input {
+            background: #0a1022;
             border: 1px solid #2c4c6e;
-            padding: 0.5rem;
-            border-radius: 0.8rem;
+            padding: 0.6rem;
+            border-radius: 1rem;
             color: white;
-        }
-
-        .add-folder button {
-            background: #0ff22d20;
-            border: 1px solid #0ff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.8rem;
-            cursor: pointer;
-        }
-
-        /* Content Area */
-        .content-area {
             flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
         }
 
-        /* Search & Filter Bar */
-        .search-bar {
+        /* Main Content */
+        .main-content {
+            flex: 3.5;
+            min-width: 280px;
+        }
+
+        /* Form Card Premium */
+        .card-premium {
+            background: rgba(12, 18, 32, 0.5);
+            backdrop-filter: blur(12px);
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            margin-bottom: 2rem;
+        }
+
+        .grid-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .grid-input input, .grid-input select, .grid-input textarea {
+            background: #0e1529;
+            border: 1px solid #2c4c6e;
+            border-radius: 1.2rem;
+            padding: 0.8rem 1rem;
+            color: white;
+            font-family: inherit;
+            flex: 1;
+        }
+
+        .btn-cyber {
+            background: linear-gradient(120deg, #0f2b3d, #0b3b46);
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            color: #b5ffff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        /* Search & Filter Row */
+        .search-row {
             display: flex;
             gap: 1rem;
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
 
-        .search-box {
-            flex: 1;
+        .search-box-modern {
+            flex: 2;
             position: relative;
         }
 
-        .search-box i {
+        .search-box-modern i {
             position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7c9bc0;
+            left: 18px;
+            top: 15px;
+            color: #5f7f9f;
         }
 
-        .search-box input {
+        .search-box-modern input {
             width: 100%;
-            padding: 0.8rem 1rem 0.8rem 2.5rem;
-            background: #0f1a2a;
+            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            background: #0e1529;
             border: 1px solid #2c4c6e;
-            border-radius: 1rem;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .type-filter {
-            padding: 0.8rem 1rem;
-            background: #0f1a2a;
-            border: 1px solid #2c4c6e;
-            border-radius: 1rem;
-            color: white;
-            cursor: pointer;
-        }
-
-        .stats {
-            font-size: 0.8rem;
-            color: #8bb3d0;
-            margin-bottom: 1rem;
-        }
-
-        /* Form Card */
-        .form-card {
-            background: rgba(10, 20, 35, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(0,255,255,0.3);
-        }
-
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-row input, .form-row select, .form-row textarea {
-            flex: 1;
-            background: #0f1a2a;
-            border: 1px solid #2c4c6e;
-            padding: 0.8rem;
-            border-radius: 1rem;
-            color: white;
-            font-family: inherit;
-        }
-
-        .form-row textarea {
-            width: 100%;
-            resize: vertical;
-        }
-
-        .btn-primary {
-            background: #0ff22d20;
-            border: 1px solid #0ff;
-            color: #0ff;
-            padding: 0.7rem 1.5rem;
             border-radius: 2rem;
-            font-weight: bold;
-            cursor: pointer;
+            color: white;
         }
 
-        /* Storage Grid */
-        .storage-grid {
+        /* Cards Grid */
+        .grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
             gap: 1.2rem;
         }
 
-        .item-card {
-            background: rgba(12, 22, 40, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 1.2rem;
-            padding: 1rem;
-            border-left: 4px solid #0ff;
-            transition: 0.2s;
+        .artifact-card {
+            background: linear-gradient(145deg, rgba(15, 22, 40, 0.8), rgba(8, 12, 24, 0.9));
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.3s;
         }
 
-        .item-card h4 {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
+        .artifact-card:hover {
+            transform: translateY(-5px);
+            border-color: cyan;
+            box-shadow: 0 10px 25px -8px rgba(0,255,255,0.3);
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 0.6rem;
         }
 
-        .item-type-badge {
-            font-size: 0.65rem;
-            background: #0a4c6e;
-            padding: 0.2rem 0.6rem;
-            border-radius: 1rem;
-        }
-
-        .item-content {
-            font-size: 0.85rem;
-            color: #ccdeff;
-            margin: 0.6rem 0;
-            word-break: break-word;
-        }
-
-        .item-meta {
+        .badge-type {
             font-size: 0.7rem;
-            color: #7c9bc0;
-            margin-top: 0.5rem;
-            display: flex;
-            justify-content: space-between;
+            background: #0f4c5f;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
         }
 
-        .delete-item {
+        .delete-card {
             background: none;
             border: none;
-            color: #ff9580;
+            color: #ff8c7a;
             cursor: pointer;
+            font-size: 1rem;
         }
 
-        .empty-message {
+        .folder-badge {
+            font-size: 0.7rem;
+            color: #7ab3c8;
+            margin-top: 0.5rem;
+        }
+
+        .empty-state {
             text-align: center;
             padding: 3rem;
-            color: #8bb3d0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 2rem;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 240px;
-            }
-            .main-container {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid rgba(0,255,255,0.2);
-            }
+        @media (max-width: 780px) {
+            .app-layout { flex-direction: column; }
+            .nav-glass { margin: 15px; }
         }
     </style>
 </head>
 <body>
+<div class="bg-orb"></div>
+<div class="noise-bg"></div>
 
-<!-- LOGIN -->
-<div id="loginContainer" class="login-container">
-    <div class="login-card">
-        <h1>🗃️ LIMESTONE</h1>
-        <p>vault pintar dengan folder & pencarian</p>
-        <div class="input-group">
-            <input type="text" id="loginUsername" placeholder="Username" autocomplete="off">
+<!-- LOGIN VIEW -->
+<div id="loginWrapper" class="login-wrapper">
+    <div class="glass-panel">
+        <div class="login-header" style="text-align: center; margin-bottom: 2rem;">
+            <h1>✦ LIMESTONE ✦</h1>
+            <p style="color: #8cb3d9;">Artifact Vault · Simpan Esensi Digitalmu</p>
         </div>
-        <div class="input-group">
-            <input type="password" id="loginPassword" placeholder="Password">
+        <div style="margin-bottom: 1rem;">
+            <input type="text" id="loginUser" class="input-glow" placeholder="Username" autocomplete="off">
         </div>
-        <button class="login-btn" id="loginBtn"><i class="fas fa-unlock-alt"></i> Buka Vault</button>
-        <div id="loginError" class="error-msg">❌ Username atau password salah</div>
+        <div style="margin-bottom: 1.8rem;">
+            <input type="password" id="loginPass" class="input-glow" placeholder="Password">
+        </div>
+        <button id="doLogin" class="login-btn"><i class="fas fa-gem"></i> Buka Vault</button>
+        <div id="loginErrorMsg" style="color:#ff9980; font-size:0.8rem; text-align:center; margin-top:1rem; display:none;">✖ Kombinasi salah</div>
     </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="dashboard">
-    <div class="navbar">
-        <div class="logo"><i class="fas fa-database"></i> LIMESTONE</div>
-        <div class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</div>
+<!-- DASHBOARD UTAMA -->
+<div id="dashboardApp" class="dashboard">
+    <div class="nav-glass">
+        <div class="logo-area"><i class="fas fa-crown"></i> LIMESTONE · VAULT</div>
+        <div class="logout-btn-neon" id="logoutBtnGlobal"><i class="fas fa-sign-out-alt"></i> Keluar</div>
     </div>
 
-    <div class="main-container">
-        <!-- Sidebar Folder -->
-        <div class="sidebar">
-            <h3><i class="fas fa-folder"></i> Folder Saya</h3>
-            <ul class="folder-list" id="folderList">
-                <li class="folder-item active" data-folder="Semua">
-                    <span class="folder-name"><i class="fas fa-inbox"></i> Semua Item</span>
-                </li>
+    <div class="app-layout">
+        <!-- SIDEBAR FOLDER PREMIUM -->
+        <div class="premium-sidebar">
+            <div class="section-title"><i class="fas fa-folder-tree"></i> KOLEKSI FOLDER</div>
+            <ul id="folderSidebarList" class="folder-tree">
+                <li class="folder-node active" data-folder="Semua"><span><i class="fas fa-database"></i> Semua Item</span></li>
             </ul>
-            <div class="add-folder">
-                <input type="text" id="newFolderName" placeholder="Nama folder baru...">
-                <button id="addFolderBtn"><i class="fas fa-plus"></i></button>
+            <div class="create-folder-input">
+                <input type="text" id="newFolderField" placeholder="Nama folder baru...">
+                <button id="createFolderBtn" style="background:#0f2b3d; border:none; border-radius:1rem; padding:0 1rem; color:cyan;"><i class="fas fa-plus"></i></button>
             </div>
         </div>
 
-        <!-- Content Area -->
-        <div class="content-area">
-            <!-- Form Tambah Item -->
-            <div class="form-card">
-                <div class="form-row">
-                    <input type="text" id="itemTitle" placeholder="Judul item...">
-                    <select id="itemType">
-                        <option value="teks">📝 Teks/Catatan</option>
-                        <option value="tautan">🔗 Tautan/Link</option>
-                        <option value="ide">💡 Ide Cepat</option>
+        <!-- MAIN AREA -->
+        <div class="main-content">
+            <!-- Tambah Item Premium -->
+            <div class="card-premium">
+                <div class="grid-input">
+                    <input type="text" id="itemTitleField" placeholder="Judul unik...">
+                    <select id="itemTypeSelect">
+                        <option value="teks">📄 Teks / Catatan</option>
+                        <option value="tautan">🔗 Tautan Penting</option>
+                        <option value="ide">💡 Ide / Inspirasi</option>
                     </select>
                 </div>
-                <div class="form-row">
-                    <textarea id="itemValue" rows="2" placeholder="Isi konten / URL..."></textarea>
+                <div class="grid-input">
+                    <textarea id="itemValueField" rows="2" placeholder="Isi / URL / Deskripsi..."></textarea>
                 </div>
-                <div class="form-row">
-                    <select id="itemFolder">
-                        <option value="Semua">📁 Tanpa Folder</option>
+                <div class="grid-input">
+                    <select id="itemFolderSelect">
+                        <option value="Semua">📁 Tanpa Folder (Umum)</option>
                     </select>
-                    <button class="btn-primary" id="saveItemBtn"><i class="fas fa-save"></i> Simpan</button>
+                    <button id="saveItemBtnMain" class="btn-cyber"><i class="fas fa-save"></i> Simpan ke Vault</button>
                 </div>
             </div>
 
-            <!-- Search & Filter -->
-            <div class="search-bar">
-                <div class="search-box">
+            <!-- Filter & Search elegan -->
+            <div class="search-row">
+                <div class="search-box-modern">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari judul atau isi...">
+                    <input type="text" id="globalSearch" placeholder="Cari judul atau konten...">
                 </div>
-                <select id="typeFilter" class="type-filter">
+                <select id="typeFilterSelect" style="background:#0e1529; border-radius:2rem; padding:0 1rem; color:white; border-color:#2c4c6e;">
                     <option value="semua">Semua tipe</option>
-                    <option value="teks">📝 Teks</option>
+                    <option value="teks">📄 Teks</option>
                     <option value="tautan">🔗 Tautan</option>
                     <option value="ide">💡 Ide</option>
                 </select>
             </div>
 
-            <div class="stats" id="statsDisplay">📊 0 item</div>
+            <div id="statInfo" style="font-size:0.8rem; margin-bottom:1rem; color:#7e9fc7;"><i class="fas fa-chart-line"></i> Memuat...</div>
 
-            <!-- Grid Item -->
-            <div id="storageGrid" class="storage-grid">
-                <div class="empty-message">✨ Belum ada item. Buat folder dan simpan sesuatu! ✨</div>
+            <!-- Grid Hasil -->
+            <div id="itemsGridContainer" class="grid-cards">
+                <div class="empty-state">✨ Vault kosong, ciptakan artefak pertamamu ✨</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // KREDENSIAL
-    const VALID_USERNAME = "admin";
-    const VALID_PASSWORD = "101010";
+    // ============= CREDENTIALS =============
+    const VALID_U = "admin";
+    const VALID_P = "101010";
 
-    // Data structure
-    let items = [];        // setiap item punya: id, title, type, value, folder, createdAt
-    let folders = ["Semua"]; // "Semua" adalah virtual, tidak bisa dihapus
-
+    // Data Structures
+    let items = [];      // {id, title, type, value, folder, createdAt}
+    let folders = ["Semua"];
     let currentFolder = "Semua";
-    let searchQuery = "";
-    let typeFilter = "semua";
+    let searchTerm = "";
+    let typeFilterGlobal = "semua";
 
-    // DOM
-    const loginContainer = document.getElementById('loginContainer');
-    const dashboard = document.getElementById('dashboard');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginError = document.getElementById('loginError');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const folderListEl = document.getElementById('folderList');
-    const addFolderBtn = document.getElementById('addFolderBtn');
-    const newFolderName = document.getElementById('newFolderName');
-    const itemTitle = document.getElementById('itemTitle');
-    const itemType = document.getElementById('itemType');
-    const itemValue = document.getElementById('itemValue');
-    const itemFolder = document.getElementById('itemFolder');
-    const saveItemBtn = document.getElementById('saveItemBtn');
-    const searchInput = document.getElementById('searchInput');
-    const typeFilterEl = document.getElementById('typeFilter');
-    const statsDisplay = document.getElementById('statsDisplay');
-    const storageGrid = document.getElementById('storageGrid');
+    // DOM elements
+    const loginWrapper = document.getElementById('loginWrapper');
+    const dashboardApp = document.getElementById('dashboardApp');
+    const loginUser = document.getElementById('loginUser');
+    const loginPass = document.getElementById('loginPass');
+    const doLogin = document.getElementById('doLogin');
+    const loginErrorMsg = document.getElementById('loginErrorMsg');
+    const logoutBtnGlobal = document.getElementById('logoutBtnGlobal');
+    const folderSidebarList = document.getElementById('folderSidebarList');
+    const createFolderBtn = document.getElementById('createFolderBtn');
+    const newFolderField = document.getElementById('newFolderField');
+    const itemTitleField = document.getElementById('itemTitleField');
+    const itemTypeSelect = document.getElementById('itemTypeSelect');
+    const itemValueField = document.getElementById('itemValueField');
+    const itemFolderSelect = document.getElementById('itemFolderSelect');
+    const saveItemBtnMain = document.getElementById('saveItemBtnMain');
+    const globalSearch = document.getElementById('globalSearch');
+    const typeFilterSelect = document.getElementById('typeFilterSelect');
+    const statInfo = document.getElementById('statInfo');
+    const itemsGridContainer = document.getElementById('itemsGridContainer');
 
-    // Load data
-    function loadData() {
-        const storedItems = localStorage.getItem('limestone_items_v2');
+    // helpers
+    function saveToLocal() {
+        localStorage.setItem('limestone_ultimate_items', JSON.stringify(items));
+        let foldersToStore = folders.filter(f => f !== "Semua");
+        localStorage.setItem('limestone_ultimate_folders', JSON.stringify(foldersToStore));
+    }
+
+    function loadFromLocal() {
+        const storedItems = localStorage.getItem('limestone_ultimate_items');
         if(storedItems) {
             items = JSON.parse(storedItems);
         } else {
             items = [
-                { id: Date.now()+1, title: "Selamat Datang di LIMESTONE", type: "teks", value: "Anda bisa membuat folder sendiri! Coba buat folder 'Proyek' atau 'Rahasia'", folder: "Semua", createdAt: new Date().toLocaleString() },
-                { id: Date.now()+2, title: "Contoh Tautan", type: "tautan", value: "https://github.com", folder: "Semua", createdAt: new Date().toLocaleString() },
-                { id: Date.now()+3, title: "Ide Keren", type: "ide", value: "Buat website dengan AI", folder: "Semua", createdAt: new Date().toLocaleString() }
+                { id: Date.now()+1, title: "Selamat datang di LIMESTONE", type: "teks", value: "Anda bisa buat folder apapun. Klik + di sidebar untuk membuat kategori.", folder: "Semua", createdAt: new Date().toLocaleString() },
+                { id: Date.now()+2, title: "Website Portfolio", type: "tautan", value: "https://github.com", folder: "Semua", createdAt: new Date().toLocaleString() },
+                { id: Date.now()+3, title: "Project AI Assistant", type: "ide", value: "Gunakan LLM lokal untuk manajemen data", folder: "Semua", createdAt: new Date().toLocaleString() }
             ];
         }
-
-        const storedFolders = localStorage.getItem('limestone_folders');
+        const storedFolders = localStorage.getItem('limestone_ultimate_folders');
         if(storedFolders) {
-            let tmp = JSON.parse(storedFolders);
-            if(!tmp.includes("Semua")) tmp.unshift("Semua");
-            folders = tmp;
+            let parsed = JSON.parse(storedFolders);
+            folders = ["Semua", ...parsed.filter(f => f !== "Semua")];
         } else {
             folders = ["Semua"];
         }
-        saveAll();
-        renderFolderList();
-        updateFolderSelect();
-        renderItems();
+        renderAll();
     }
 
-    function saveAll() {
-        localStorage.setItem('limestone_items_v2', JSON.stringify(items));
-        let saveFolders = folders.filter(f => f !== "Semua");
-        localStorage.setItem('limestone_folders', JSON.stringify(saveFolders));
+    function renderAll() {
+        renderFolderSidebar();
+        updateFolderDropdown();
+        renderItemsGrid();
     }
 
-    function renderFolderList() {
-        folderListEl.innerHTML = '';
+    function renderFolderSidebar() {
+        folderSidebarList.innerHTML = '';
         folders.forEach(folder => {
             const li = document.createElement('li');
-            li.className = `folder-item ${currentFolder === folder ? 'active' : ''}`;
+            li.className = `folder-node ${currentFolder === folder ? 'active' : ''}`;
             li.setAttribute('data-folder', folder);
+            const icon = folder === "Semua" ? "<i class='fas fa-layer-group'></i>" : "<i class='fas fa-folder'></i>";
             li.innerHTML = `
-                <span class="folder-name"><i class="fas fa-${folder === 'Semua' ? 'inbox' : 'folder'}"></i> ${escapeHtml(folder)}</span>
-                ${folder !== 'Semua' ? `<button class="delete-folder" data-folder="${folder}"><i class="fas fa-trash"></i></button>` : ''}
+                <span>${icon} ${escapeHtml(folder)}</span>
+                ${folder !== "Semua" ? `<button class="delete-folder-icon" data-folder="${folder}" style="background:none; border:none; color:#ff8f7a; cursor:pointer;"><i class="fas fa-trash-alt"></i></button>` : ''}
             `;
             li.addEventListener('click', (e) => {
-                if(e.target.classList.contains('delete-folder')) return;
+                if(e.target.classList.contains('delete-folder-icon') || e.target.parentElement?.classList.contains('delete-folder-icon')) return;
                 currentFolder = folder;
-                renderFolderList();
-                renderItems();
+                renderAll();
             });
-            folderListEl.appendChild(li);
+            folderSidebarList.appendChild(li);
         });
-
-        document.querySelectorAll('.delete-folder').forEach(btn => {
+        // hapus folder
+        document.querySelectorAll('.delete-folder-icon').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const folderName = btn.getAttribute('data-folder');
-                if(confirm(`Hapus folder "${folderName}"? Item di dalamnya akan dipindah ke "Semua".`)) {
-                    items.forEach(item => {
-                        if(item.folder === folderName) item.folder = "Semua";
-                    });
+                if(confirm(`Hapus folder "${folderName}"? Semua item akan dipindah ke "Semua".`)) {
+                    items.forEach(it => { if(it.folder === folderName) it.folder = "Semua"; });
                     folders = folders.filter(f => f !== folderName);
                     if(currentFolder === folderName) currentFolder = "Semua";
-                    saveAll();
-                    renderFolderList();
-                    updateFolderSelect();
-                    renderItems();
+                    saveToLocal();
+                    renderAll();
                 }
             });
         });
     }
 
-    function updateFolderSelect() {
-        itemFolder.innerHTML = '';
-        const optionAll = document.createElement('option');
-        optionAll.value = "Semua";
-        optionAll.textContent = "📁 Tanpa Folder (Semua)";
-        itemFolder.appendChild(optionAll);
-        
-        folders.forEach(folder => {
-            if(folder !== "Semua") {
-                const opt = document.createElement('option');
-                opt.value = folder;
-                opt.textContent = `📂 ${folder}`;
-                itemFolder.appendChild(opt);
-            }
+    function updateFolderDropdown() {
+        itemFolderSelect.innerHTML = '';
+        folders.forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f;
+            opt.textContent = f === "Semua" ? "📁 Umum / Tanpa Folder" : `📂 ${f}`;
+            itemFolderSelect.appendChild(opt);
         });
     }
 
-    function addFolder() {
-        let name = newFolderName.value.trim();
-        if(!name) return alert("Nama folder tidak boleh kosong");
-        if(folders.includes(name)) return alert("Folder sudah ada");
-        folders.push(name);
-        saveAll();
-        renderFolderList();
-        updateFolderSelect();
-        newFolderName.value = '';
-    }
-
-    function addItem() {
-        let title = itemTitle.value.trim();
-        let type = itemType.value;
-        let value = itemValue.value.trim();
-        let folder = itemFolder.value;
-
-        if(!title) return alert("Judul harus diisi");
-        if(!value) return alert("Konten harus diisi");
-
-        const newItem = {
-            id: Date.now(),
-            title: title,
-            type: type,
-            value: value,
-            folder: folder,
-            createdAt: new Date().toLocaleString()
-        };
-        items.unshift(newItem);
-        saveAll();
-        renderItems();
-        itemTitle.value = '';
-        itemValue.value = '';
-        itemType.value = 'teks';
-    }
-
-    function deleteItem(id) {
-        items = items.filter(i => i.id !== id);
-        saveAll();
-        renderItems();
-    }
-
-    function renderItems() {
-        // Filter berdasarkan folder, search, dan tipe
+    function renderItemsGrid() {
         let filtered = items.filter(item => {
             if(currentFolder !== "Semua" && item.folder !== currentFolder) return false;
-            if(searchQuery !== "") {
-                const q = searchQuery.toLowerCase();
+            if(searchTerm.trim() !== "") {
+                const q = searchTerm.toLowerCase();
                 return item.title.toLowerCase().includes(q) || item.value.toLowerCase().includes(q);
             }
             return true;
         });
-
-        if(typeFilter !== "semua") {
-            filtered = filtered.filter(item => item.type === typeFilter);
+        if(typeFilterGlobal !== "semua") {
+            filtered = filtered.filter(item => item.type === typeFilterGlobal);
         }
-
-        // Update stats
-        statsDisplay.innerHTML = `📊 ${filtered.length} item • Folder: ${currentFolder} ${searchQuery ? '• Pencarian: "'+searchQuery+'"' : ''}`;
-
+        statInfo.innerHTML = `<i class="fas fa-chart-simple"></i> ${filtered.length} item • Folder: ${currentFolder} ${searchTerm ? '· filter aktif' : ''}`;
         if(filtered.length === 0) {
-            storageGrid.innerHTML = `<div class="empty-message">📭 Tidak ada item. Buat folder atau tambah item! 📭</div>`;
+            itemsGridContainer.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i> Tidak ada artefak, tambah item baru.</div>`;
             return;
         }
-
-        storageGrid.innerHTML = '';
+        itemsGridContainer.innerHTML = '';
         filtered.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'item-card';
-            let icon = item.type === 'teks' ? '📄' : (item.type === 'tautan' ? '🔗' : '💡');
-            let displayValue = item.value;
-            if(item.type === 'tautan' && (item.value.startsWith('http://') || item.value.startsWith('https://'))) {
-                displayValue = `<a href="${item.value}" target="_blank" style="color:#6bd4ff;">${item.value.substring(0, 60)}${item.value.length>60 ? '…' : ''}</a>`;
+            card.className = 'artifact-card';
+            let iconVal = item.type === 'teks' ? '📄' : (item.type === 'tautan' ? '🔗' : '💡');
+            let contentPreview = item.value;
+            if(item.type === 'tautan' && (item.value.startsWith('http'))) {
+                contentPreview = `<a href="${item.value}" target="_blank" style="color:#5fd4ff;">${item.value.substring(0, 50)}${item.value.length>50 ? '…' : ''}</a>`;
             } else {
-                displayValue = escapeHtml(item.value.length > 100 ? item.value.substring(0,100)+'…' : item.value);
+                contentPreview = escapeHtml(item.value.length > 90 ? item.value.substring(0,90)+"…" : item.value);
             }
-
             card.innerHTML = `
-                <h4>
-                    <span>${icon} ${escapeHtml(item.title)}</span>
-                    <button class="delete-item" data-id="${item.id}"><i class="fas fa-trash-alt"></i></button>
-                </h4>
-                <div class="item-content">${displayValue}</div>
-                <div class="item-meta">
-                    <span><i class="far fa-folder"></i> ${item.folder === "Semua" ? '📁 Umum' : '📂 '+item.folder}</span>
-                    <span class="item-type-badge">${item.type}</span>
+                <div class="card-header">
+                    <span style="font-weight:600;">${iconVal} ${escapeHtml(item.title)}</span>
+                    <button class="delete-card" data-id="${item.id}"><i class="fas fa-times-circle"></i></button>
                 </div>
-                <div class="item-meta"><i class="far fa-clock"></i> ${item.createdAt || 'baru'}</div>
+                <div style="font-size:0.85rem; opacity:0.9; margin:0.5rem 0;">${contentPreview}</div>
+                <div class="folder-badge"><i class="far fa-folder"></i> ${item.folder === "Semua" ? 'Umum' : item.folder} · <i class="far fa-clock"></i> ${item.createdAt || 'baru'}</div>
+                <span class="badge-type">${item.type}</span>
             `;
-            storageGrid.appendChild(card);
+            itemsGridContainer.appendChild(card);
         });
-
-        document.querySelectorAll('.delete-item').forEach(btn => {
+        document.querySelectorAll('.delete-card').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.stopPropagation();
                 const id = parseInt(btn.getAttribute('data-id'));
-                deleteItem(id);
+                items = items.filter(i => i.id !== id);
+                saveToLocal();
+                renderItemsGrid();
             });
         });
+    }
+
+    function addNewItem() {
+        let title = itemTitleField.value.trim();
+        let type = itemTypeSelect.value;
+        let value = itemValueField.value.trim();
+        let folder = itemFolderSelect.value;
+        if(!title || !value) { alert("Judul dan konten wajib diisi"); return; }
+        const newItem = {
+            id: Date.now(),
+            title, type, value, folder,
+            createdAt: new Date().toLocaleString()
+        };
+        items.unshift(newItem);
+        saveToLocal();
+        renderItemsGrid();
+        itemTitleField.value = '';
+        itemValueField.value = '';
+    }
+
+    function createNewFolder() {
+        let name = newFolderField.value.trim();
+        if(!name) return;
+        if(folders.includes(name)) { alert("Folder sudah ada"); return; }
+        folders.push(name);
+        saveToLocal();
+        renderAll();
+        newFolderField.value = '';
     }
 
     function escapeHtml(str) {
@@ -711,62 +650,57 @@
         });
     }
 
-    // Search & filter event
-    searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value;
-        renderItems();
-    });
-    typeFilterEl.addEventListener('change', (e) => {
-        typeFilter = e.target.value;
-        renderItems();
-    });
+    // EVENT LISTENERS
+    saveItemBtnMain.addEventListener('click', addNewItem);
+    createFolderBtn.addEventListener('click', createNewFolder);
+    globalSearch.addEventListener('input', (e) => { searchTerm = e.target.value; renderItemsGrid(); });
+    typeFilterSelect.addEventListener('change', (e) => { typeFilterGlobal = e.target.value; renderItemsGrid(); });
 
-    // Auth
-    function performLogin() {
-        const user = document.getElementById('loginUsername').value.trim();
-        const pass = document.getElementById('loginPassword').value.trim();
-        if(user === VALID_USERNAME && pass === VALID_PASSWORD) {
-            localStorage.setItem('limestone_auth_v2', 'true');
-            loginContainer.style.opacity = '0';
-            loginContainer.style.visibility = 'hidden';
+    // LOGIC LOGIN
+    function attemptLogin() {
+        const user = loginUser.value.trim();
+        const pass = loginPass.value.trim();
+        if(user === VALID_U && pass === VALID_P) {
+            localStorage.setItem('limestone_auth_flag', 'true');
+            loginWrapper.style.opacity = '0';
             setTimeout(() => {
-                loginContainer.style.display = 'none';
-                dashboard.style.display = 'block';
-                loadData();
-            }, 300);
+                loginWrapper.style.display = 'none';
+                dashboardApp.style.display = 'block';
+                setTimeout(() => { dashboardApp.style.opacity = '1'; }, 50);
+                loadFromLocal();
+            }, 400);
         } else {
-            loginError.style.display = 'block';
-            setTimeout(() => { loginError.style.display = 'none'; }, 2000);
+            loginErrorMsg.style.display = 'block';
+            setTimeout(() => loginErrorMsg.style.display = 'none', 1800);
         }
     }
 
-    function logout() {
-        localStorage.removeItem('limestone_auth_v2');
-        dashboard.style.display = 'none';
-        loginContainer.style.display = 'flex';
-        loginContainer.style.opacity = '1';
-        loginContainer.style.visibility = 'visible';
+    function logoutSystem() {
+        localStorage.removeItem('limestone_auth_flag');
+        dashboardApp.style.opacity = '0';
+        setTimeout(() => {
+            dashboardApp.style.display = 'none';
+            loginWrapper.style.display = 'flex';
+            loginWrapper.style.opacity = '1';
+            loginUser.value = ''; loginPass.value = '';
+        }, 300);
     }
 
-    function checkAuth() {
-        const isAuth = localStorage.getItem('limestone_auth_v2');
-        if(isAuth === 'true') {
-            loginContainer.style.display = 'none';
-            dashboard.style.display = 'block';
-            loadData();
-        } else {
-            loginContainer.style.display = 'flex';
-            dashboard.style.display = 'none';
-        }
+    doLogin.addEventListener('click', attemptLogin);
+    logoutBtnGlobal.addEventListener('click', logoutSystem);
+    document.getElementById('loginPass').addEventListener('keypress', (e) => { if(e.key === 'Enter') attemptLogin(); });
+
+    // Session check
+    const isAuth = localStorage.getItem('limestone_auth_flag');
+    if(isAuth === 'true') {
+        loginWrapper.style.display = 'none';
+        dashboardApp.style.display = 'block';
+        dashboardApp.style.opacity = '1';
+        loadFromLocal();
+    } else {
+        loginWrapper.style.display = 'flex';
+        dashboardApp.style.display = 'none';
     }
-
-    loginBtn.addEventListener('click', performLogin);
-    logoutBtn.addEventListener('click', logout);
-    addFolderBtn.addEventListener('click', addFolder);
-    saveItemBtn.addEventListener('click', addItem);
-    document.getElementById('loginPassword').addEventListener('keypress', (e) => { if(e.key === 'Enter') performLogin(); });
-
-    checkAuth();
 </script>
 </body>
 </html>
