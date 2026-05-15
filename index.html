@@ -182,6 +182,25 @@
             background-clip: text;
             color: transparent;
         }
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .nav-btn {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--border-cyan);
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .nav-btn.active {
+            background: rgba(0, 229, 255, 0.25);
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
         .btn-logout {
             background: rgba(255, 70, 70, 0.12);
             border: 1px solid #ff6b5c;
@@ -266,6 +285,110 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+        }
+
+        /* DASHBOARD HOME CARDS */
+        .dashboard-home {
+            display: block;
+        }
+        .dashboard-vault {
+            display: none;
+        }
+        .home-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .home-card {
+            background: linear-gradient(145deg, rgba(15, 22, 40, 0.85), rgba(5, 8, 18, 0.9));
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border: 1px solid var(--border-cyan);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            text-align: center;
+        }
+        .home-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--cyan);
+            box-shadow: 0 15px 35px -12px rgba(0, 229, 255, 0.3);
+        }
+        .home-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .home-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .home-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .shortcut-notes-container {
+            background: rgba(8, 12, 22, 0.5);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            border: 1px solid var(--border-cyan);
+            padding: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .shortcut-notes-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--cyan);
+        }
+        .shortcut-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--cyan);
+        }
+        .shortcut-code {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .shortcut-text {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: rgba(0, 229, 255, 0.15);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            color: var(--cyan);
+            cursor: pointer;
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 229, 255, 0.9);
+            color: #05070A;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            z-index: 10000;
+            animation: fadeOut 2s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-20px); visibility: hidden; }
         }
 
         /* FORM TAMBAH ITEM */
@@ -397,7 +520,7 @@
             color: #7e9fc7;
         }
 
-        /* MODAL VIEW (HANYA LIHAT, TIDAK BISA EDIT LANGSUNG) */
+        /* MODAL VIEW */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -473,7 +596,7 @@
             cursor: pointer;
         }
 
-        /* MODAL EDIT (TERPISAH, MUNCUL SETELAH KLIK TOMBOL EDIT) */
+        /* MODAL EDIT */
         .edit-modal-overlay {
             position: fixed;
             inset: 0;
@@ -540,6 +663,9 @@
             .glass-nav {
                 margin: 15px;
             }
+            .nav-menu {
+                margin-top: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -572,12 +698,16 @@
 <div id="dashboardApp" class="dashboard">
     <div class="glass-nav">
         <div class="brand"><i class="fas fa-crown"></i> NEXUS</div>
-        <div id="logoutButton" class="btn-logout"><i class="fas fa-door-open"></i> Exit</div>
+        <div class="nav-menu">
+            <div id="homeNavBtn" class="nav-btn active"><i class="fas fa-home"></i> Home</div>
+            <div id="vaultNavBtn" class="nav-btn"><i class="fas fa-database"></i> Vault</div>
+            <div id="logoutButton" class="btn-logout"><i class="fas fa-door-open"></i> Exit</div>
+        </div>
     </div>
 
     <div class="main-grid">
-        <!-- SIDEBAR FOLDER -->
-        <div class="sidebar-premium">
+        <!-- SIDEBAR FOLDER (hanya tampil di Vault) -->
+        <div id="sidebarContainer" class="sidebar-premium" style="display: none;">
             <div class="section-header"><i class="fas fa-folder-tree"></i> COLLECTIONS</div>
             <ul id="folderSidebarList" class="folder-list">
                 <li class="folder-item active" data-folder="All"><span><i class="fas fa-database"></i> All Items</span></li>
@@ -588,55 +718,78 @@
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- CONTENT AREA -->
         <div class="content-area">
-            <!-- FORM TAMBAH ITEM (HANYA MUNCUL DI "All") -->
-            <div id="formContainer" class="form-glass">
-                <div class="form-row">
-                    <input type="text" id="itemTitleInput" placeholder="Title / Name">
-                    <select id="itemTypeSelect">
-                        <option value="text">📄 Text Note</option>
-                        <option value="link">🔗 Important Link</option>
-                        <option value="idea">💡 Spark Idea</option>
-                    </select>
+            <!-- DASHBOARD HOME -->
+            <div id="homeView" class="dashboard-home">
+                <div class="home-cards-grid">
+                    <!-- Card AutoHotkeys -->
+                    <div id="ahkCard" class="home-card">
+                        <div class="home-card-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="home-card-title">AutoHotkeys</div>
+                        <div class="home-card-desc">Klik untuk mendownload AutoHotkey v2</div>
+                    </div>
+                    <!-- Card Shortcut Notes -->
+                    <div id="notesCard" class="home-card">
+                        <div class="home-card-icon"><i class="fas fa-sticky-note"></i></div>
+                        <div class="home-card-title">Shortcut Notes</div>
+                        <div class="home-card-desc">Koleksi shortcut / untuk AutoHotkey</div>
+                    </div>
                 </div>
-                <div class="form-row">
-                    <textarea id="itemValueInput" rows="2" placeholder="Content / URL / Description"></textarea>
-                </div>
-                <div class="form-row">
-                    <select id="itemFolderSelect">
-                        <option value="All">📁 General</option>
-                    </select>
-                    <button id="saveItemButton" class="btn-prime"><i class="fas fa-save"></i> Save Artifact</button>
+                
+                <!-- Shortcut Notes Container (tampil saat klik card notes) -->
+                <div id="shortcutContainer" class="shortcut-notes-container" style="display: none;">
+                    <div class="shortcut-notes-title"><i class="fas fa-copy"></i> Shortcut AutoHotkey</div>
+                    <div id="shortcutList"></div>
                 </div>
             </div>
 
-            <!-- SEARCH & FILTER SECTION -->
-            <div class="search-section">
-                <div class="search-wrapper">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInputField" placeholder="search title or content...">
+            <!-- VAULT VIEW (Form, Search, Cards) -->
+            <div id="vaultView" class="dashboard-vault">
+                <div id="formContainer" class="form-glass">
+                    <div class="form-row">
+                        <input type="text" id="itemTitleInput" placeholder="Title / Name">
+                        <select id="itemTypeSelect">
+                            <option value="text">📄 Text Note</option>
+                            <option value="link">🔗 Important Link</option>
+                            <option value="idea">💡 Spark Idea</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <textarea id="itemValueInput" rows="2" placeholder="Content / URL / Description"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <select id="itemFolderSelect">
+                            <option value="All">📁 General</option>
+                        </select>
+                        <button id="saveItemButton" class="btn-prime"><i class="fas fa-save"></i> Save Artifact</button>
+                    </div>
                 </div>
-                <select id="filterTypeSelect" class="filter-select">
-                    <option value="all">All types</option>
-                    <option value="text">📄 Text</option>
-                    <option value="link">🔗 Link</option>
-                    <option value="idea">💡 Idea</option>
-                </select>
-            </div>
 
-            <!-- STATISTICS -->
-            <div id="statsArea" class="stats-info"><i class="fas fa-chart-simple"></i> loading...</div>
+                <div class="search-section">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInputField" placeholder="search title or content...">
+                    </div>
+                    <select id="filterTypeSelect" class="filter-select">
+                        <option value="all">All types</option>
+                        <option value="text">📄 Text</option>
+                        <option value="link">🔗 Link</option>
+                        <option value="idea">💡 Idea</option>
+                    </select>
+                </div>
 
-            <!-- CARDS GRID -->
-            <div id="cardsGridContainer" class="cards-grid">
-                <div class="empty-state">✦ your vault is empty, create your first artifact ✦</div>
+                <div id="statsArea" class="stats-info"><i class="fas fa-chart-simple"></i> loading...</div>
+
+                <div id="cardsGridContainer" class="cards-grid">
+                    <div class="empty-state">✦ your vault is empty, create your first artifact ✦</div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL VIEW (HANYA LIHAT, TIDAK BISA EDIT LANGSUNG) -->
+<!-- MODAL VIEW -->
 <div id="viewModalOverlay" class="modal-overlay">
     <div class="modal-card">
         <div id="viewModalTitle" class="modal-view-title"></div>
@@ -649,7 +802,7 @@
     </div>
 </div>
 
-<!-- MODAL EDIT (TERPISAH, MUNCUL SAAT KLIK TOMBOL EDIT) -->
+<!-- MODAL EDIT -->
 <div id="editModalOverlay" class="edit-modal-overlay">
     <div class="edit-modal-card">
         <h3 style="margin-bottom: 1rem;"><i class="fas fa-pen"></i> Edit Artifact</h3>
@@ -680,6 +833,72 @@
     let typeFilter = "all";
     let viewingItemId = null;
     let editingItemId = null;
+    let currentView = "home"; // home atau vault
+
+    // ============== SHORTCUT DATA ==============
+    const shortcutData = [
+        { code: "/id", text: "Bisa di bantu dengan menyebutkan ID yang digunakan bossku? 😊" },
+        { code: "/ba", text: "Baik bossku 😊" },
+        { code: "/bukti", text: "Bisa di bantu lampirkan bukti transfernya bossku?" },
+        { code: "/via", text: "Bosku ingin deposit Via apa ya bosku?" },
+        { code: "/cek", text: "Baik bosku Kami cek terlebih dahulu ya bosku" },
+        { code: "/batal", text: "Baik bosku untuk formulir depositnya telah kami batalkan ya bosku..\nJika bosku sudah melakukan transfer, silahkan di isi kembali form depositnya dengan nominal yang benar ya bosku^^" },
+        { code: "/tunggu", text: "Silahkan di tunggu sebentar ya bossku😊" },
+        { code: "/antrian", text: "Mohon ditunggu ya bosku,Untuk saat ini ID bossku masih dalam antrian ya bossku" },
+        { code: "/estimasi", text: "Untuk estimasi waktunya tidak bisa di pastikan ya bosku..\nJadi silakan di tunggu dan coba di cek secara berkala ya bosku..\nTerima kasih bosku..😊" },
+        { code: "/maintenance", text: "Mohon maaf bosku untuk saat ini sedang terjadi nya maintenance ya :)\nUntuk estimasi waktunya tidak bisa di pastikan ya bosku..\nJadi untuk sementara bosku bisa bermain di website partner kami\nAGODASLOT: https://10agodaslot.sbs/\nSilahkan Langsung di Klik ya bosku :)\nTerima kasih bosku..😊" },
+        { code: "/sama", text: "Baik bosku, Terima kasih kembali ya bosku🤗😚" },
+        { code: "/kendala", text: "Mohon maaf bosku, Bisa di jelaskan kendala nya dimana bosku agar kami bisa bantu bosku ?" },
+        { code: "/keterangan", text: "Mohon dibantu dengan memberikan screenshot yang muncul di layar bosku yah agar kami dapat membantunya" },
+        { code: "/nama", text: "Dibantu dengan menyebutkan nama pengirim nya bossku?" },
+        { code: "/sk", text: "Silahkan ya bossku😊" },
+        { code: "/isi", text: "Jika sudah melakukan transfer silahkan di isi kembali form depositnya ya bossku😚" },
+        { code: "/gacor", text: "Di tunggu untuk deposit hokinya bosku , Permainan hari ini sedang sangat gacor😚" },
+        { code: "/pass", text: "jika lupa password mohon dibantu dengan Nomor Rekening dan Nama Rekening via Bank / E-WALLET yang terdaftar ya bosku?" },
+        { code: "/dpqris", text: "Untuk deposit QRIS, bosku bisa ke menu deposit, lalu klik tujuan QRIS PAYMENT, masukkan nominal deposit dan klik KIRIM, barcode QRIS-nya akan Muncul setelah bosku Klik Tombol kirim ya 😊" },
+        { code: "/qris", text: "untuk deposit via QRIS akan reject secara otomatis ya bosku , mohon di tunggu hingga 5 menit kedepan ya bosku 😊" },
+        { code: "/daftar", text: "Mohon dilengkapi data data nya ya bosku\nUsername :\nNama Rekening :\nNomor Rekening :\nJenis Bank :\nNomor Telepon :\nEmail :\nSilahkan yabosku agar kami bisa bantu daftarkan ya bossku 😘" },
+        { code: "/terdaftar", text: "Mohon maaf bosku untuk Nomor yang bosku berikan belum terdaftar pada situs kami ya bosku" },
+        { code: "/to", text: "Perhitungan Bonus Turn Over dan Bonus Cashback akan kami hitung di awal minggu setiap hari Senin siang ya bosku. Bonus akan kami masukkan berupa kredit ke dalam ID anda setiap minggunya. ( Tepat di Hari SENIN ) Jam 13:00 wib - 17:00 wib paling lambat yah ya bos ku... Terima kasih😊😊" },
+        { code: "/tidak", text: "Mohon maaf Bosku, kalau bonus belum masuk berarti ID Bosku belum mencapai syarat minimal yang ditentukan sistem. Tetap tingkatkan terus permainannya ya Bosku. Terima Kasih🤗🤗" },
+        { code: "/bagi", text: "Untuk bonus cashback sudah di bagikan ya bosku dan jika ID bosku tidak mendapatkan nya itu berarti TO dan cashback bosku belum mencapai batas yang sudah di tentukan ya bosku" },
+        { code: "/lambat", text: "Bonus di bagikan paling lambat 17.00 WIB ya bosku, Silahkan di tunggu saja, jika akun bosku mencapai SYARAT yang sudah di tentukan maka bonus akan masuk secara otomatis ya bosku." },
+        { code: "/main", text: "Selamat bermain ya bosku.. Kami selalu mendoakan member kami mendapatkan JP dan menang banyak ya bosku..🙏" },
+        { code: "/ajak", text: "Jangan lupa untuk ajak teman bosku bermain di situs kami ya bosku terima kasih.😇" },
+        { code: "/optimis", text: "harus optimis dan yakin bosku karena keberuntungan setiap orang tidak ada yang tau ya bosku di coba kembali jika feeling sudah bagus 🙏🥰" },
+        { code: "/berkecil", text: "Jangan berkecil hati ya bosku.. yang namanya permainan pasti ada naik ada turunnya bosku..\nCoba istirahat dulu atau coba keberuntungan di game lain, mana tahu hoki besarnya ada di sana ya bosku..😊" },
+        { code: "/sett", text: "Mohon maaf ya bosku di situs kami tidak ada yang nama nya SETTINGAN ya bosku,untuk kemenangan itu sendiri bergantung pada cara bermain dan keberuntungan bosku sendiri ya bosku.silahkan di coba kembali bosku kami doakan semoga bosku mendapatkan kemenangan besar dan JACKPOT ya bosku 😊" },
+        { code: "/sett1", text: "Untuk kemenangan tidak ada yang bisa di setting bosku, Semua murni dari keberuntungan dan cara bermain saja bosku, Maka kami sarankan untuk tidak memaksakan di satu game bosku." },
+        { code: "/manual", text: "Untuk Bonus Di hitung oleh pihak sistem secara otomatis bosku, tidak di hitung secara manual\nJadi tidak mungkin ada kesalahan dalam perhitungan ya bosku.." },
+        { code: "/live", text: "Untuk RTP kami bersifat LIVE ya bosku" },
+        { code: "/nyerah", text: "Jangan mudah menyerah dan tetap semangat ya bosku\nKami yakin kemenangan besar akan bosku dapat kan ya bosku\nCoba gas lagi pelan-pelan kalau feeling sudah enak ya Bosku^^😊" },
+        { code: "/paksa", text: "Bosku jika merasa kurang beruntung silahkan di coba bermain di lain waktu saja ya bosku jangan terlalu di paksakan ya bosku" },
+        { code: "/putaran", text: "Bermain yang sabar ya bosku, jika bosku sedang hoki dan dapat putaran bagus pasti bisa menang 🙏 JP besar pasti datang kalau main dengan strategi ya bosku.. Tetap semangat bos" },
+        { code: "/kalah2", text: "kami selalu berharap kemenangan untuk setiap member tersayang kami ya bossku ^^ tapi kami tidak bisa menentukan ID mana yang menang dan kalah ya bossku ^^" },
+        { code: "/kalah1", text: "Mohon bersabar ya bosku, Untuk kedepannya kami doakan bossku mendapatkan kemenangan lebih dari kekalahan ya bosku..\nSilahkan di coba kembali ya bosku ^^😊" },
+        { code: "/kalah", text: "Setiap permainan pasti ada kalah menang bosku, Dicoba pelan - pelan ya bosku kami yakin masih ada peluang kemenangan bosku😊" },
+        { code: "/naik", text: "Saran kami nih Bosku, kalau sudah ada kenaikan atau menang dikit, langsung ditarik saja dulu Bosku biar terasa hasilnya. Menang atau kalah kan kembali ke tangan Bosku sendiri, jangan terlalu dipaksakan ya😊" },
+        { code: "/wds", text: "Untuk tarik dana mohon bersabar ya bosku..\nkami memproses sesuai urutan yg ada\njika Tulisan tarik dana bos sudah Approve berati sudah kami proses ya bosku\nTerima kasih 😚😚😚" },
+        { code: "/dps", text: "Untuk deposit mohon bersabar ya bosku..\nkami memproses sesuai urutan yg ada\njika Tulisan deposit bos sudah Approve berati sudah kami proses ya bosku\nTerima kasih 😚😚😚" },
+        { code: "/23", text: "Untuk DEPOSIT bosku sudah di proseskan ya bosku^^😊\nSilahkan di refresh kembali user id nya ya bosku\nSelamat bermain bosku, kami doakan bosku menang banyak\nTerima kasih ya bosku😊" },
+        { code: "/24", text: "Untuk WITHDRAW nya sudah berhasil kami prosesskan ya bossku 😊\nSilahkan di cek kembali pada mutasi rekeningnya ya bossku" },
+        { code: "/limit", text: "Untuk kendala rekening LIMIT tidak bisa di alihkan ya bosku Di wajibkan untuk menunggu riset LIMIT saat pergantian bulan bosku😊" },
+        { code: "/ada", text: "Ada yang bisa kami bantu? 😊" },
+        { code: "/bersih", text: "Coba di clear history browser nya terlebih dahulu ya bosku\nSetelah itu baru di coba login dengan link ini ya bosku :" },
+        { code: "/link", text: "Link Agodatoto :\nhttp://12agodatoto.net\n\nSilahkan langsung di klik ya bosku :)\nTelegram : @agodatoto" },
+        { code: "/coba", text: "Bosku bisa coba bermain dengan POLA dan RTP dari kami ya bosku" },
+        { code: "/rtp", text: "Untuk RTP AgodaToto bisa di klik pada link berikut ya bosku\n\nLINK : https://rtp-agodatoto.pages.dev/\n\nSilahkan Langsung di Klik ya bosku🤗 . saran kami bermain RTP di atas 80% ya bosku." },
+        { code: "/doa", text: "Kami doakan agar bosku dapat memenang kan kemenangan besar ya bosku kami selalu mendoakan bosku menang banyak ya😊" },
+        { code: "/luar", text: "Mohon maaf bosku , kami hanya menjawab pertanya seputar kendala situs kami ya ,untuk pertanyaan Diluar dari kendala situs kami tidak akan kami jawab bosku" },
+        { code: "/blokir", text: "Mohon maaf bosku di AGODATOTO tidak tersedia sistem pemblokiran akun dikarenakan AGODATOTO merupakan situs resmi dan terpercaya nomor 1 ya bosku." },
+        { code: "/solusi", text: "Baik bosku, Untuk salah satu solusinya, Silahkan bosku bisa membeli Nomor Kartu baru\nSetelah itu bosku bisa daftarkan ke aplikasi E-Wallet seperti OVO, GOPAY, atau LINKAJA ya bosku\nKemudian setelah di daftarkan pada aplikasi E-Wallet, bosku harus mempremiumkan akun E-Wallet tersebut dengan menggunakan KTP dengan nama yang sesuai yang bosku daftarkan ya.." },
+        { code: "/data", text: "Bisa dibantu dengan mengisi data berikut ya bosku\nNama Rekening/ewallet =\nNomor Rekening/ewallet =\nJenis Rekening/ewallet =" },
+        { code: "/min", text: "Selamat Datang Di Situs AGODATOTO 💯💯💎\n\nUntuk Minimal Deposit Di AGODATOTO :\n💸 Minimal Deposit via BANK : Rp 5.000..\n💸 Minimal Deposit via E-WALLET : Rp 5.000..\n💸 Minimal Deposit via PULSA TELKOMSEL & AXIS : Rp 5.000 ( TANPA POTONGAN )\n\n💲💲 Untuk Minimal Withdraw : Rp 25.000..\n\n🔗🔗 Untuk Link AGODATOTO : http://12agodatoto.net\n📲 Join LINK GRUP TELEGRAM kami : https://t.me/agodatoto_info" },
+        { code: "/claim", text: "Untuk bonus hanya bisa di claim pada saaat baru melakukan deposit dan harus konfirmasi ke kami apabila baru deposit dan mau claim bonus yah bosku, jika saldo sudah habis dimainkan maka tidak bisa di claim lagi yah bosku" },
+        { code: "/new", text: "PROMO BONUS DEPOSIT MEMBER BARU 10% - 20%\n\nSyarat & Ketentuan :\n\n- MINIMAL DEPOSIT RP 20.000,-\n- MAXIMAL BONUS RP 200.000,-\n- UNTUK PLAYER LIVEGAME DAN SLOT SYARAT MELAKUKAN WITHDRAW HARUS MENCAPAI 5X CREDIT DARI NILAI DEPOSIT\n- JIKA CLAIM BONUS INI TIDAK BOLEH BERMAIN TOGEL DAN JIKA TETAP BERMAIN TOGEL AKAN TERKENA PELANGGARAN DAN AKAN DI PROSES SESUAI PERATURAN YANG BERLAKU\n- BONUS BATAL APABILA TERDAPAT KESAMAAN IP, DAN SAMA DATA DENGAN MEMBER LAINNYA.\n- PENGGUNAKAN IP ADDRESS YANG SAMA DENGAN BERTUJUAN MENDAPATKAN BONUS BERKALI KALI ATAU MENGGUNAKAN 3RD PARTI SEPERTI VPN/SSH/PROXY SANGAT TIDAK DI PERBOLEHKAN.\n- JIKA MEMBER MELANGGAR PERATURAN MAKA TOTAL SEMUA KEMENANGAN AKAN DI BEKUKAN DAN TIDAK BISA DI TARIK.\n- SEMUA KEPUTUSAN ADMIN AGODATOTO ADALAH MUTLAK DAN TIDAK DAPAT DI GANGGU GUGAT, DAN TERIMA KASIH ATAS KERJASAMA NYA." },
+        { code: "/caratogel", text: "Untuk cara pemasangan togel yaitu dengan nilai bettingan paling kecil 500 perak dan pemasangan nominal bettingan nya bisa di input 0.5 ya bosku.\nDan untuk totomacau minimal bettingan 1.000 dengan menginput nominal 1 pada bettingan togelnya bosku." },
+        { code: "/reff", text: "Mohon maaf untuk saldo yang sudah di depositkan tidak dapat dikembalikan/direfund ya bosku" }
+    ];
 
     // ============== DOM ELEMENTS ==============
     const loginScreen = document.getElementById('loginScreen');
@@ -689,6 +908,15 @@
     const loginButton = document.getElementById('loginButton');
     const loginErrorMsg = document.getElementById('loginErrorMsg');
     const logoutButton = document.getElementById('logoutButton');
+    const homeNavBtn = document.getElementById('homeNavBtn');
+    const vaultNavBtn = document.getElementById('vaultNavBtn');
+    const sidebarContainer = document.getElementById('sidebarContainer');
+    const homeView = document.getElementById('homeView');
+    const vaultView = document.getElementById('vaultView');
+    const ahkCard = document.getElementById('ahkCard');
+    const notesCard = document.getElementById('notesCard');
+    const shortcutContainer = document.getElementById('shortcutContainer');
+    const shortcutList = document.getElementById('shortcutList');
     const folderSidebarList = document.getElementById('folderSidebarList');
     const createFolderWrapper = document.getElementById('createFolderWrapper');
     const newFolderNameInput = document.getElementById('newFolderNameInput');
@@ -703,16 +931,12 @@
     const filterTypeSelect = document.getElementById('filterTypeSelect');
     const statsArea = document.getElementById('statsArea');
     const cardsGridContainer = document.getElementById('cardsGridContainer');
-    
-    // Modal View Elements
     const viewModalOverlay = document.getElementById('viewModalOverlay');
     const viewModalTitle = document.getElementById('viewModalTitle');
     const viewModalMeta = document.getElementById('viewModalMeta');
     const viewModalContent = document.getElementById('viewModalContent');
     const closeViewModalButton = document.getElementById('closeViewModalButton');
     const openEditFromViewButton = document.getElementById('openEditFromViewButton');
-    
-    // Modal Edit Elements
     const editModalOverlay = document.getElementById('editModalOverlay');
     const editTitleInput = document.getElementById('editTitleInput');
     const editTypeSelect = document.getElementById('editTypeSelect');
@@ -759,6 +983,15 @@
         addRippleEffect(e);
     });
 
+    // ============== TOAST NOTIFICATION ==============
+    function showToast(message, isSuccess = true) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
     // ============== HELPER FUNCTIONS ==============
     function escapeHtml(str) {
         if (!str) return '';
@@ -782,7 +1015,7 @@
             items = JSON.parse(storedItems);
         } else {
             items = [
-                { id: Date.now() + 1, title: "Welcome to Nexus", type: "text", value: "Premium vault with view & edit separated. Click on any card to view details, then click Edit button to modify.", folder: "All", createdAt: new Date().toLocaleString() },
+                { id: Date.now() + 1, title: "Welcome to Nexus", type: "text", value: "Premium vault with Home Dashboard! Click Vault to manage your items.", folder: "All", createdAt: new Date().toLocaleString() },
                 { id: Date.now() + 2, title: "GitHub Resources", type: "link", value: "https://github.com", folder: "All", createdAt: new Date().toLocaleString() },
                 { id: Date.now() + 3, title: "AI Revolution", type: "idea", value: "Build a personal AI assistant with local LLM", folder: "All", createdAt: new Date().toLocaleString() }
             ];
@@ -797,8 +1030,56 @@
         renderAll();
     }
 
+    // ============== NAVIGATION ==============
+    function switchToHome() {
+        currentView = "home";
+        homeNavBtn.classList.add('active');
+        vaultNavBtn.classList.remove('active');
+        sidebarContainer.style.display = "none";
+        homeView.style.display = "block";
+        vaultView.style.display = "none";
+        shortcutContainer.style.display = "none";
+    }
+
+    function switchToVault() {
+        currentView = "vault";
+        vaultNavBtn.classList.add('active');
+        homeNavBtn.classList.remove('active');
+        sidebarContainer.style.display = "block";
+        homeView.style.display = "none";
+        vaultView.style.display = "block";
+        renderAll();
+    }
+
+    // ============== SHORTCUT NOTES ==============
+    function renderShortcutNotes() {
+        shortcutList.innerHTML = '';
+        shortcutData.forEach(shortcut => {
+            const item = document.createElement('div');
+            item.className = 'shortcut-item';
+            item.innerHTML = `
+                <div class="shortcut-code">${escapeHtml(shortcut.code)}</div>
+                <div class="shortcut-text">${escapeHtml(shortcut.text)}</div>
+                <button class="copy-btn" data-code="${escapeHtml(shortcut.code)}" data-text="${escapeHtml(shortcut.text)}"><i class="fas fa-copy"></i> Copy</button>
+            `;
+            shortcutList.appendChild(item);
+        });
+        
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const code = btn.getAttribute('data-code');
+                const text = btn.getAttribute('data-text');
+                const fullText = `${code}\n${text}`;
+                navigator.clipboard.writeText(fullText);
+                showToast(`✓ ${code} copied!`);
+            });
+        });
+    }
+
     // ============== RENDER FUNCTIONS ==============
     function renderAll() {
+        if (currentView !== "vault") return;
         renderSidebar();
         updateFolderSelect();
         checkFormVisibility();
@@ -915,7 +1196,7 @@
         });
     }
 
-    // ============== VIEW MODAL (HANYA LIHAT) ==============
+    // ============== VIEW MODAL ==============
     function openViewModal(itemId) {
         const item = items.find(i => i.id === itemId);
         if (!item) return;
@@ -941,7 +1222,7 @@
         viewingItemId = null;
     }
 
-    // ============== EDIT MODAL (TERPISAH) ==============
+    // ============== EDIT MODAL ==============
     function openEditModal(itemId) {
         const item = items.find(i => i.id === itemId);
         if (!item) return;
@@ -969,6 +1250,7 @@
             renderCards();
             closeEditModal();
             closeViewModal();
+            showToast("✓ Artifact updated!");
         }
     }
 
@@ -1001,6 +1283,7 @@
         renderCards();
         itemTitleInput.value = '';
         itemValueInput.value = '';
+        showToast("✓ Artifact saved!");
     }
 
     function createNewFolder() {
@@ -1017,6 +1300,18 @@
         saveToLocalStorage();
         renderAll();
         newFolderNameInput.value = '';
+        showToast(`✓ Folder "${folderName}" created!`);
+    }
+
+    // ============== DOWNLOAD AHK ==============
+    function downloadAHK() {
+        const link = document.createElement('a');
+        link.href = "https://www.autohotkey.com/download/ahk-v2.exe";
+        link.download = "ahk-v2.exe";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("✓ Downloading AutoHotkey v2...");
     }
 
     // ============== LOGIN/LOGOUT ==============
@@ -1031,6 +1326,8 @@
                 loginScreen.style.display = 'none';
                 dashboardApp.style.display = 'block';
                 loadFromLocalStorage();
+                renderShortcutNotes();
+                switchToHome();
             }, 400);
         } else {
             loginErrorMsg.style.display = 'block';
@@ -1056,6 +1353,22 @@
     // ============== EVENT LISTENERS ==============
     loginButton.addEventListener('click', attemptLogin);
     logoutButton.addEventListener('click', logout);
+    homeNavBtn.addEventListener('click', switchToHome);
+    vaultNavBtn.addEventListener('click', switchToVault);
+    ahkCard.addEventListener('click', downloadAHK);
+    
+    let notesVisible = false;
+    notesCard.addEventListener('click', () => {
+        if (notesVisible) {
+            shortcutContainer.style.display = "none";
+            notesVisible = false;
+        } else {
+            shortcutContainer.style.display = "block";
+            notesVisible = true;
+            renderShortcutNotes();
+        }
+    });
+    
     saveItemButton.addEventListener('click', addNewItem);
     createFolderButton.addEventListener('click', createNewFolder);
     searchInputField.addEventListener('input', (e) => {
@@ -1070,13 +1383,11 @@
         if (e.key === 'Enter') attemptLogin();
     });
     
-    // View Modal Events
     closeViewModalButton.addEventListener('click', closeViewModal);
     viewModalOverlay.addEventListener('click', (e) => {
         if (e.target === viewModalOverlay) closeViewModal();
     });
     
-    // Tombol Edit di View Modal -> buka Edit Modal
     openEditFromViewButton.addEventListener('click', () => {
         if (viewingItemId) {
             closeViewModal();
@@ -1086,7 +1397,6 @@
         }
     });
     
-    // Edit Modal Events
     cancelEditButton.addEventListener('click', closeEditModal);
     confirmEditButton.addEventListener('click', saveEditChanges);
     editModalOverlay.addEventListener('click', (e) => {
@@ -1098,6 +1408,8 @@
         loginScreen.style.display = 'none';
         dashboardApp.style.display = 'block';
         loadFromLocalStorage();
+        renderShortcutNotes();
+        switchToHome();
     }
 </script>
 </body>
