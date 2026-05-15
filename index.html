@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>LIMESTONE | Penyimpanan Digital Pribadi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0a0f1f, #03060c);
+            color: #eef5ff;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ========= LOGIN PAGE ========= */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 10%, #0a0f1f, #010101);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .login-card {
+            background: rgba(15, 25, 45, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5), 0 0 20px rgba(0,255,255,0.2);
+            text-align: center;
+        }
+
+        .login-card h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #aaffff, #2a9d8f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-card p {
+            color: #9bb5d4;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+            color: #bbd9ff;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a4c6e;
+            border-radius: 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #0ff;
+            box-shadow: 0 0 8px #0ff;
+        }
+
+        .login-btn {
+            background: linear-gradient(90deg, #0f2b3d, #0a4c5c);
+            border: none;
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(90deg, #1c4e6e, #0f7b8c);
+            box-shadow: 0 0 12px cyan;
+            transform: scale(1.01);
+        }
+
+        .error-msg {
+            color: #ff9e8f;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* ========= APP DASHBOARD (tersembunyi awal) ========= */
+        .dashboard {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(5, 10, 22, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,255,255,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c0ffff, #2a9d8f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logout-btn {
+            background: rgba(255,70,70,0.2);
+            border: 1px solid #ff7b72;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            color: #ffb4a2;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #ff4d4d30;
+            color: white;
+        }
+
+        /* hero section */
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+        }
+
+        .hero h2 {
+            font-size: 2.4rem;
+            font-weight: 700;
+        }
+
+        .hero span {
+            color: #0ff;
+            text-shadow: 0 0 5px cyan;
+        }
+
+        /* form tambah item */
+        .form-card {
+            max-width: 700px;
+            margin: 1rem auto;
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(0,255,255,0.3);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row input, .form-row select, .form-row textarea {
+            flex: 1;
+            background: #0f1a2a;
+            border: 1px solid #2c4c6e;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            color: white;
+            font-family: inherit;
+        }
+
+        .form-row textarea {
+            min-width: 100%;
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background: #0ff22d20;
+            border: 1px solid #0ff;
+            color: #0ff;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #0ff33a40;
+            box-shadow: 0 0 10px cyan;
+        }
+
+        /* grid penyimpanan */
+        .storage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem 5%;
+        }
+
+        .item-card {
+            background: rgba(12, 22, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            border-left: 4px solid #0ff;
+            transition: 0.2s;
+            word-break: break-word;
+        }
+
+        .item-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .item-type {
+            font-size: 0.7rem;
+            background: #0a4c6e;
+            padding: 0.2rem 0.7rem;
+            border-radius: 1rem;
+        }
+
+        .item-content {
+            font-size: 0.9rem;
+            color: #ccdeff;
+            margin: 0.6rem 0;
+        }
+
+        .item-meta {
+            font-size: 0.7rem;
+            color: #7c9bc0;
+            margin-top: 0.5rem;
+        }
+
+        .delete-item {
+            background: none;
+            border: none;
+            color: #ff9580;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #8bb3d0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+            color: #5c7f9e;
+        }
+
+        @media (max-width: 600px) {
+            .storage-grid { padding: 1rem; }
+            .hero h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LAYAR LOGIN -->
+<div id="loginContainer" class="login-container">
+    <div class="login-card">
+        <h1>⚙️ LIMESTONE</h1>
+        <p>vault pribadi • simpan apa saja</p>
+        <div class="input-group">
+            <label><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="loginUsername" placeholder="admin" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••">
+        </div>
+        <button class="login-btn" id="loginBtn"><i class="fas fa-key"></i> Buka Lemari</button>
+        <div id="loginError" class="error-msg"><i class="fas fa-exclamation-triangle"></i> Username atau password salah</div>
+    </div>
+</div>
+
+<!-- DASHBOARD UTAMA -->
+<div id="dashboard" class="dashboard">
+    <div class="navbar">
+        <div class="logo"><i class="fas fa-gem"></i> LIMESTONE</div>
+        <div class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</div>
+    </div>
+
+    <div class="hero">
+        <h2>📦 <span>Simpan Apa Saja</span> — dengan gaya</h2>
+        <p>teks, tautan, catatan, ide, kenangan</p>
+    </div>
+
+    <!-- Form tambah item -->
+    <div class="form-card">
+        <div class="form-row">
+            <input type="text" id="itemTitle" placeholder="Judul (misal: Ide Website, Resep, URL)">
+            <select id="itemType">
+                <option value="teks">📝 Teks/Catatan</option>
+                <option value="tautan">🔗 Tautan/Link</option>
+                <option value="ide">💡 Ide Cepat</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <textarea id="itemValue" rows="2" placeholder="Isi / konten / URL ..."></textarea>
+        </div>
+        <div style="text-align: right;">
+            <button class="btn-primary" id="saveItemBtn"><i class="fas fa-save"></i> Simpan ke Limestone</button>
+        </div>
+    </div>
+
+    <!-- Grid penyimpanan -->
+    <div style="padding: 0 5%;">
+        <h3 style="margin: 1rem 0 0 0;"><i class="fas fa-database"></i> Koleksi tersimpan</h3>
+        <div id="storageGrid" class="storage-grid">
+            <!-- item akan di inject via js -->
+            <div class="empty-message">✨ Belum ada apa-apa. Simpan sesuatu dulu ✨</div>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-lock"></i> Data hanya tersimpan di browser Anda. Private vault.
+    </footer>
+</div>
+
+<script>
+    // ---------- KREDENSIAL ----------
+    const VALID_USERNAME = "admin";
+    const VALID_PASSWORD = "101010";
+
+    // Data storage (localStorage)
+    let items = [];
+
+    // DOM elements login
+    const loginContainer = document.getElementById('loginContainer');
+    const dashboard = document.getElementById('dashboard');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const loginUsername = document.getElementById('loginUsername');
+    const loginPassword = document.getElementById('loginPassword');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // DOM elements storage
+    const storageGrid = document.getElementById('storageGrid');
+    const itemTitle = document.getElementById('itemTitle');
+    const itemType = document.getElementById('itemType');
+    const itemValue = document.getElementById('itemValue');
+    const saveItemBtn = document.getElementById('saveItemBtn');
+
+    // Fungsi load data dari localStorage
+    function loadItemsFromStorage() {
+        const stored = localStorage.getItem('limestone_items');
+        if(stored) {
+            items = JSON.parse(stored);
+        } else {
+            // contoh data awal biar menarik
+            items = [
+                { id: Date.now()+1, title: "✨ Sambutan", type: "teks", value: "Selamat datang di LIMESTONE! Simpan rahasia, ide, atau catatan apapun.", createdAt: new Date().toLocaleString() },
+                { id: Date.now()+2, title: "GitHub Repo favorit", type: "tautan", value: "https://github.com/features", createdAt: new Date().toLocaleString() },
+                { id: Date.now()+3, title: "Proyek AI", type: "ide", value: "Buat asisten pribadi dengan vector database", createdAt: new Date().toLocaleString() }
+            ];
+            saveItemsToLocal();
+        }
+        renderStorageGrid();
+    }
+
+    function saveItemsToLocal() {
+        localStorage.setItem('limestone_items', JSON.stringify(items));
+    }
+
+    function renderStorageGrid() {
+        if(!storageGrid) return;
+        if(items.length === 0) {
+            storageGrid.innerHTML = `<div class="empty-message">📭 Belum ada yang tersimpan. Mulai tambah item! 📭</div>`;
+            return;
+        }
+        storageGrid.innerHTML = '';
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            let icon = item.type === 'teks' ? '📄' : (item.type === 'tautan' ? '🔗' : '💡');
+            let displayValue = item.value;
+            if(item.type === 'tautan' && (item.value.startsWith('http://') || item.value.startsWith('https://'))) {
+                displayValue = `<a href="${item.value}" target="_blank" style="color:#6bd4ff;">${item.value.substring(0, 50)}${item.value.length>50 ? '…' : ''}</a>`;
+            } else {
+                displayValue = item.value.length > 120 ? item.value.substring(0,120)+'…' : item.value;
+            }
+            card.innerHTML = `
+                <h4>${icon} ${escapeHtml(item.title)} 
+                    <button class="delete-item" data-id="${item.id}"><i class="fas fa-trash-alt"></i></button>
+                </h4>
+                <div class="item-content">${typeof displayValue === 'string' ? displayValue : item.value}</div>
+                <div class="item-meta"><i class="far fa-clock"></i> ${item.createdAt || 'baru'} • ${item.type}</div>
+            `;
+            storageGrid.appendChild(card);
+        });
+
+        // event delete
+        document.querySelectorAll('.delete-item').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.getAttribute('data-id'));
+                items = items.filter(i => i.id !== id);
+                saveItemsToLocal();
+                renderStorageGrid();
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    function addNewItem() {
+        let title = itemTitle.value.trim();
+        let type = itemType.value;
+        let value = itemValue.value.trim();
+        if(!title) {
+            alert("Judul tidak boleh kosong!");
+            return;
+        }
+        if(!value) {
+            alert("Konten tidak boleh kosong!");
+            return;
+        }
+        const newItem = {
+            id: Date.now(),
+            title: title,
+            type: type,
+            value: value,
+            createdAt: new Date().toLocaleString()
+        };
+        items.unshift(newItem);
+        saveItemsToLocal();
+        renderStorageGrid();
+        // reset form
+        itemTitle.value = '';
+        itemValue.value = '';
+        itemType.value = 'teks';
+    }
+
+    // LOGIN system
+    function performLogin() {
+        const user = loginUsername.value.trim();
+        const pass = loginPassword.value.trim();
+        if(user === VALID_USERNAME && pass === VALID_PASSWORD) {
+            // login success
+            localStorage.setItem('limestone_auth', 'true');
+            loginContainer.style.opacity = '0';
+            loginContainer.style.visibility = 'hidden';
+            setTimeout(() => {
+                loginContainer.style.display = 'none';
+                dashboard.style.display = 'block';
+                setTimeout(() => { dashboard.style.opacity = '1'; }, 20);
+                loadItemsFromStorage(); // muat data pribadi dari localstorage
+            }, 300);
+        } else {
+            loginError.style.display = 'block';
+            setTimeout(() => { loginError.style.display = 'none'; }, 2000);
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('limestone_auth');
+        dashboard.style.opacity = '0';
+        setTimeout(() => {
+            dashboard.style.display = 'none';
+            loginContainer.style.display = 'flex';
+            setTimeout(() => {
+                loginContainer.style.opacity = '1';
+                loginContainer.style.visibility = 'visible';
+            }, 20);
+            loginUsername.value = '';
+            loginPassword.value = '';
+        }, 200);
+    }
+
+    // cek session saat halaman dimuat
+    function checkAuth() {
+        const isAuth = localStorage.getItem('limestone_auth');
+        if(isAuth === 'true') {
+            loginContainer.style.display = 'none';
+            dashboard.style.display = 'block';
+            dashboard.style.opacity = '1';
+            loadItemsFromStorage();
+        } else {
+            loginContainer.style.display = 'flex';
+            dashboard.style.display = 'none';
+        }
+    }
+
+    // event listeners
+    loginBtn.addEventListener('click', performLogin);
+    logoutBtn.addEventListener('click', logout);
+    saveItemBtn.addEventListener('click', addNewItem);
+
+    // biar enter di login
+    loginPassword.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') performLogin();
+    });
+    loginUsername.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') performLogin();
+    });
+
+    // init
+    checkAuth();
+</script>
+</body>
+</html>
