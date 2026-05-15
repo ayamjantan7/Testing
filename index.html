@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>LIMESTONE | Penyimpanan Digital Pribadi</title>
+    <title>LIMESTONE | Penyimpanan Digital dengan Folder & Pencarian</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -21,7 +21,7 @@
             min-height: 100vh;
         }
 
-        /* ========= LOGIN PAGE ========= */
+        /* Login Page */
         .login-container {
             position: fixed;
             top: 0;
@@ -33,7 +33,6 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(2px);
             transition: opacity 0.5s ease, visibility 0.5s;
         }
 
@@ -58,22 +57,9 @@
             margin-bottom: 0.5rem;
         }
 
-        .login-card p {
-            color: #9bb5d4;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-
         .input-group {
             margin-bottom: 1.5rem;
             text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.8rem;
-            margin-bottom: 0.4rem;
-            color: #bbd9ff;
         }
 
         .input-group input {
@@ -84,7 +70,6 @@
             border-radius: 1rem;
             color: white;
             font-size: 1rem;
-            transition: 0.2s;
         }
 
         .input-group input:focus {
@@ -100,17 +85,8 @@
             padding: 0.9rem;
             border-radius: 2rem;
             font-weight: bold;
-            font-size: 1rem;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
-            margin-top: 0.5rem;
-        }
-
-        .login-btn:hover {
-            background: linear-gradient(90deg, #1c4e6e, #0f7b8c);
-            box-shadow: 0 0 12px cyan;
-            transform: scale(1.01);
         }
 
         .error-msg {
@@ -120,14 +96,11 @@
             display: none;
         }
 
-        /* ========= APP DASHBOARD (tersembunyi awal) ========= */
+        /* Dashboard */
         .dashboard {
             display: none;
-            opacity: 0;
-            transition: opacity 0.5s;
         }
 
-        /* navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -139,6 +112,8 @@
             position: sticky;
             top: 0;
             z-index: 99;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .logo {
@@ -155,40 +130,160 @@
             border: 1px solid #ff7b72;
             padding: 0.5rem 1.2rem;
             border-radius: 2rem;
-            color: #ffb4a2;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .logout-btn:hover {
-            background: #ff4d4d30;
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar Folder */
+        .sidebar {
+            width: 280px;
+            background: rgba(8, 15, 28, 0.6);
+            backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(0,255,255,0.2);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #0ff;
+        }
+
+        .folder-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .folder-item {
+            padding: 0.7rem 0.8rem;
+            margin: 0.3rem 0;
+            border-radius: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .folder-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .folder-item.active {
+            background: rgba(0, 255, 255, 0.2);
+            border-left: 3px solid #0ff;
+        }
+
+        .folder-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .delete-folder {
+            background: none;
+            border: none;
+            color: #ff8a7a;
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .delete-folder:hover {
+            opacity: 1;
+        }
+
+        .add-folder {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .add-folder input {
+            flex: 1;
+            background: #0f1a2a;
+            border: 1px solid #2c4c6e;
+            padding: 0.5rem;
+            border-radius: 0.8rem;
             color: white;
         }
 
-        /* hero section */
-        .hero {
-            text-align: center;
-            padding: 3rem 1rem 2rem;
+        .add-folder button {
+            background: #0ff22d20;
+            border: 1px solid #0ff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.8rem;
+            cursor: pointer;
         }
 
-        .hero h2 {
-            font-size: 2.4rem;
-            font-weight: 700;
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
         }
 
-        .hero span {
-            color: #0ff;
-            text-shadow: 0 0 5px cyan;
+        /* Search & Filter Bar */
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        /* form tambah item */
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7c9bc0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            background: #0f1a2a;
+            border: 1px solid #2c4c6e;
+            border-radius: 1rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .type-filter {
+            padding: 0.8rem 1rem;
+            background: #0f1a2a;
+            border: 1px solid #2c4c6e;
+            border-radius: 1rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .stats {
+            font-size: 0.8rem;
+            color: #8bb3d0;
+            margin-bottom: 1rem;
+        }
+
+        /* Form Card */
         .form-card {
-            max-width: 700px;
-            margin: 1rem auto;
             background: rgba(10, 20, 35, 0.6);
             backdrop-filter: blur(8px);
-            border-radius: 2rem;
+            border-radius: 1.5rem;
             padding: 1.5rem;
+            margin-bottom: 2rem;
             border: 1px solid rgba(0,255,255,0.3);
         }
 
@@ -210,7 +305,7 @@
         }
 
         .form-row textarea {
-            min-width: 100%;
+            width: 100%;
             resize: vertical;
         }
 
@@ -222,56 +317,52 @@
             border-radius: 2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .btn-primary:hover {
-            background: #0ff33a40;
-            box-shadow: 0 0 10px cyan;
-        }
-
-        /* grid penyimpanan */
+        /* Storage Grid */
         .storage-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem 5%;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
         }
 
         .item-card {
             background: rgba(12, 22, 40, 0.7);
             backdrop-filter: blur(10px);
-            border-radius: 1.5rem;
-            padding: 1.2rem;
+            border-radius: 1.2rem;
+            padding: 1rem;
             border-left: 4px solid #0ff;
             transition: 0.2s;
-            word-break: break-word;
         }
 
         .item-card h4 {
-            font-size: 1.2rem;
+            font-size: 1rem;
             margin-bottom: 0.5rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .item-type {
-            font-size: 0.7rem;
+        .item-type-badge {
+            font-size: 0.65rem;
             background: #0a4c6e;
-            padding: 0.2rem 0.7rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 1rem;
         }
 
         .item-content {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #ccdeff;
             margin: 0.6rem 0;
+            word-break: break-word;
         }
 
         .item-meta {
             font-size: 0.7rem;
             color: #7c9bc0;
             margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
         }
 
         .delete-item {
@@ -279,8 +370,6 @@
             border: none;
             color: #ff9580;
             cursor: pointer;
-            font-size: 1rem;
-            margin-left: 0.5rem;
         }
 
         .empty-message {
@@ -289,162 +378,325 @@
             color: #8bb3d0;
         }
 
-        footer {
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.8rem;
-            color: #5c7f9e;
-        }
-
-        @media (max-width: 600px) {
-            .storage-grid { padding: 1rem; }
-            .hero h2 { font-size: 1.8rem; }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(0,255,255,0.2);
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- LAYAR LOGIN -->
+<!-- LOGIN -->
 <div id="loginContainer" class="login-container">
     <div class="login-card">
-        <h1>⚙️ LIMESTONE</h1>
-        <p>vault pribadi • simpan apa saja</p>
+        <h1>🗃️ LIMESTONE</h1>
+        <p>vault pintar dengan folder & pencarian</p>
         <div class="input-group">
-            <label><i class="fas fa-user"></i> Username</label>
-            <input type="text" id="loginUsername" placeholder="admin" autocomplete="off">
+            <input type="text" id="loginUsername" placeholder="Username" autocomplete="off">
         </div>
         <div class="input-group">
-            <label><i class="fas fa-lock"></i> Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••">
+            <input type="password" id="loginPassword" placeholder="Password">
         </div>
-        <button class="login-btn" id="loginBtn"><i class="fas fa-key"></i> Buka Lemari</button>
-        <div id="loginError" class="error-msg"><i class="fas fa-exclamation-triangle"></i> Username atau password salah</div>
+        <button class="login-btn" id="loginBtn"><i class="fas fa-unlock-alt"></i> Buka Vault</button>
+        <div id="loginError" class="error-msg">❌ Username atau password salah</div>
     </div>
 </div>
 
-<!-- DASHBOARD UTAMA -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="dashboard">
     <div class="navbar">
-        <div class="logo"><i class="fas fa-gem"></i> LIMESTONE</div>
+        <div class="logo"><i class="fas fa-database"></i> LIMESTONE</div>
         <div class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</div>
     </div>
 
-    <div class="hero">
-        <h2>📦 <span>Simpan Apa Saja</span> — dengan gaya</h2>
-        <p>teks, tautan, catatan, ide, kenangan</p>
-    </div>
+    <div class="main-container">
+        <!-- Sidebar Folder -->
+        <div class="sidebar">
+            <h3><i class="fas fa-folder"></i> Folder Saya</h3>
+            <ul class="folder-list" id="folderList">
+                <li class="folder-item active" data-folder="Semua">
+                    <span class="folder-name"><i class="fas fa-inbox"></i> Semua Item</span>
+                </li>
+            </ul>
+            <div class="add-folder">
+                <input type="text" id="newFolderName" placeholder="Nama folder baru...">
+                <button id="addFolderBtn"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
 
-    <!-- Form tambah item -->
-    <div class="form-card">
-        <div class="form-row">
-            <input type="text" id="itemTitle" placeholder="Judul (misal: Ide Website, Resep, URL)">
-            <select id="itemType">
-                <option value="teks">📝 Teks/Catatan</option>
-                <option value="tautan">🔗 Tautan/Link</option>
-                <option value="ide">💡 Ide Cepat</option>
-            </select>
-        </div>
-        <div class="form-row">
-            <textarea id="itemValue" rows="2" placeholder="Isi / konten / URL ..."></textarea>
-        </div>
-        <div style="text-align: right;">
-            <button class="btn-primary" id="saveItemBtn"><i class="fas fa-save"></i> Simpan ke Limestone</button>
-        </div>
-    </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Form Tambah Item -->
+            <div class="form-card">
+                <div class="form-row">
+                    <input type="text" id="itemTitle" placeholder="Judul item...">
+                    <select id="itemType">
+                        <option value="teks">📝 Teks/Catatan</option>
+                        <option value="tautan">🔗 Tautan/Link</option>
+                        <option value="ide">💡 Ide Cepat</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <textarea id="itemValue" rows="2" placeholder="Isi konten / URL..."></textarea>
+                </div>
+                <div class="form-row">
+                    <select id="itemFolder">
+                        <option value="Semua">📁 Tanpa Folder</option>
+                    </select>
+                    <button class="btn-primary" id="saveItemBtn"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </div>
 
-    <!-- Grid penyimpanan -->
-    <div style="padding: 0 5%;">
-        <h3 style="margin: 1rem 0 0 0;"><i class="fas fa-database"></i> Koleksi tersimpan</h3>
-        <div id="storageGrid" class="storage-grid">
-            <!-- item akan di inject via js -->
-            <div class="empty-message">✨ Belum ada apa-apa. Simpan sesuatu dulu ✨</div>
+            <!-- Search & Filter -->
+            <div class="search-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari judul atau isi...">
+                </div>
+                <select id="typeFilter" class="type-filter">
+                    <option value="semua">Semua tipe</option>
+                    <option value="teks">📝 Teks</option>
+                    <option value="tautan">🔗 Tautan</option>
+                    <option value="ide">💡 Ide</option>
+                </select>
+            </div>
+
+            <div class="stats" id="statsDisplay">📊 0 item</div>
+
+            <!-- Grid Item -->
+            <div id="storageGrid" class="storage-grid">
+                <div class="empty-message">✨ Belum ada item. Buat folder dan simpan sesuatu! ✨</div>
+            </div>
         </div>
     </div>
-    <footer>
-        <i class="fas fa-lock"></i> Data hanya tersimpan di browser Anda. Private vault.
-    </footer>
 </div>
 
 <script>
-    // ---------- KREDENSIAL ----------
+    // KREDENSIAL
     const VALID_USERNAME = "admin";
     const VALID_PASSWORD = "101010";
 
-    // Data storage (localStorage)
-    let items = [];
+    // Data structure
+    let items = [];        // setiap item punya: id, title, type, value, folder, createdAt
+    let folders = ["Semua"]; // "Semua" adalah virtual, tidak bisa dihapus
 
-    // DOM elements login
+    let currentFolder = "Semua";
+    let searchQuery = "";
+    let typeFilter = "semua";
+
+    // DOM
     const loginContainer = document.getElementById('loginContainer');
     const dashboard = document.getElementById('dashboard');
     const loginBtn = document.getElementById('loginBtn');
     const loginError = document.getElementById('loginError');
-    const loginUsername = document.getElementById('loginUsername');
-    const loginPassword = document.getElementById('loginPassword');
     const logoutBtn = document.getElementById('logoutBtn');
-
-    // DOM elements storage
-    const storageGrid = document.getElementById('storageGrid');
+    const folderListEl = document.getElementById('folderList');
+    const addFolderBtn = document.getElementById('addFolderBtn');
+    const newFolderName = document.getElementById('newFolderName');
     const itemTitle = document.getElementById('itemTitle');
     const itemType = document.getElementById('itemType');
     const itemValue = document.getElementById('itemValue');
+    const itemFolder = document.getElementById('itemFolder');
     const saveItemBtn = document.getElementById('saveItemBtn');
+    const searchInput = document.getElementById('searchInput');
+    const typeFilterEl = document.getElementById('typeFilter');
+    const statsDisplay = document.getElementById('statsDisplay');
+    const storageGrid = document.getElementById('storageGrid');
 
-    // Fungsi load data dari localStorage
-    function loadItemsFromStorage() {
-        const stored = localStorage.getItem('limestone_items');
-        if(stored) {
-            items = JSON.parse(stored);
+    // Load data
+    function loadData() {
+        const storedItems = localStorage.getItem('limestone_items_v2');
+        if(storedItems) {
+            items = JSON.parse(storedItems);
         } else {
-            // contoh data awal biar menarik
             items = [
-                { id: Date.now()+1, title: "✨ Sambutan", type: "teks", value: "Selamat datang di LIMESTONE! Simpan rahasia, ide, atau catatan apapun.", createdAt: new Date().toLocaleString() },
-                { id: Date.now()+2, title: "GitHub Repo favorit", type: "tautan", value: "https://github.com/features", createdAt: new Date().toLocaleString() },
-                { id: Date.now()+3, title: "Proyek AI", type: "ide", value: "Buat asisten pribadi dengan vector database", createdAt: new Date().toLocaleString() }
+                { id: Date.now()+1, title: "Selamat Datang di LIMESTONE", type: "teks", value: "Anda bisa membuat folder sendiri! Coba buat folder 'Proyek' atau 'Rahasia'", folder: "Semua", createdAt: new Date().toLocaleString() },
+                { id: Date.now()+2, title: "Contoh Tautan", type: "tautan", value: "https://github.com", folder: "Semua", createdAt: new Date().toLocaleString() },
+                { id: Date.now()+3, title: "Ide Keren", type: "ide", value: "Buat website dengan AI", folder: "Semua", createdAt: new Date().toLocaleString() }
             ];
-            saveItemsToLocal();
         }
-        renderStorageGrid();
+
+        const storedFolders = localStorage.getItem('limestone_folders');
+        if(storedFolders) {
+            let tmp = JSON.parse(storedFolders);
+            if(!tmp.includes("Semua")) tmp.unshift("Semua");
+            folders = tmp;
+        } else {
+            folders = ["Semua"];
+        }
+        saveAll();
+        renderFolderList();
+        updateFolderSelect();
+        renderItems();
     }
 
-    function saveItemsToLocal() {
-        localStorage.setItem('limestone_items', JSON.stringify(items));
+    function saveAll() {
+        localStorage.setItem('limestone_items_v2', JSON.stringify(items));
+        let saveFolders = folders.filter(f => f !== "Semua");
+        localStorage.setItem('limestone_folders', JSON.stringify(saveFolders));
     }
 
-    function renderStorageGrid() {
-        if(!storageGrid) return;
-        if(items.length === 0) {
-            storageGrid.innerHTML = `<div class="empty-message">📭 Belum ada yang tersimpan. Mulai tambah item! 📭</div>`;
+    function renderFolderList() {
+        folderListEl.innerHTML = '';
+        folders.forEach(folder => {
+            const li = document.createElement('li');
+            li.className = `folder-item ${currentFolder === folder ? 'active' : ''}`;
+            li.setAttribute('data-folder', folder);
+            li.innerHTML = `
+                <span class="folder-name"><i class="fas fa-${folder === 'Semua' ? 'inbox' : 'folder'}"></i> ${escapeHtml(folder)}</span>
+                ${folder !== 'Semua' ? `<button class="delete-folder" data-folder="${folder}"><i class="fas fa-trash"></i></button>` : ''}
+            `;
+            li.addEventListener('click', (e) => {
+                if(e.target.classList.contains('delete-folder')) return;
+                currentFolder = folder;
+                renderFolderList();
+                renderItems();
+            });
+            folderListEl.appendChild(li);
+        });
+
+        document.querySelectorAll('.delete-folder').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const folderName = btn.getAttribute('data-folder');
+                if(confirm(`Hapus folder "${folderName}"? Item di dalamnya akan dipindah ke "Semua".`)) {
+                    items.forEach(item => {
+                        if(item.folder === folderName) item.folder = "Semua";
+                    });
+                    folders = folders.filter(f => f !== folderName);
+                    if(currentFolder === folderName) currentFolder = "Semua";
+                    saveAll();
+                    renderFolderList();
+                    updateFolderSelect();
+                    renderItems();
+                }
+            });
+        });
+    }
+
+    function updateFolderSelect() {
+        itemFolder.innerHTML = '';
+        const optionAll = document.createElement('option');
+        optionAll.value = "Semua";
+        optionAll.textContent = "📁 Tanpa Folder (Semua)";
+        itemFolder.appendChild(optionAll);
+        
+        folders.forEach(folder => {
+            if(folder !== "Semua") {
+                const opt = document.createElement('option');
+                opt.value = folder;
+                opt.textContent = `📂 ${folder}`;
+                itemFolder.appendChild(opt);
+            }
+        });
+    }
+
+    function addFolder() {
+        let name = newFolderName.value.trim();
+        if(!name) return alert("Nama folder tidak boleh kosong");
+        if(folders.includes(name)) return alert("Folder sudah ada");
+        folders.push(name);
+        saveAll();
+        renderFolderList();
+        updateFolderSelect();
+        newFolderName.value = '';
+    }
+
+    function addItem() {
+        let title = itemTitle.value.trim();
+        let type = itemType.value;
+        let value = itemValue.value.trim();
+        let folder = itemFolder.value;
+
+        if(!title) return alert("Judul harus diisi");
+        if(!value) return alert("Konten harus diisi");
+
+        const newItem = {
+            id: Date.now(),
+            title: title,
+            type: type,
+            value: value,
+            folder: folder,
+            createdAt: new Date().toLocaleString()
+        };
+        items.unshift(newItem);
+        saveAll();
+        renderItems();
+        itemTitle.value = '';
+        itemValue.value = '';
+        itemType.value = 'teks';
+    }
+
+    function deleteItem(id) {
+        items = items.filter(i => i.id !== id);
+        saveAll();
+        renderItems();
+    }
+
+    function renderItems() {
+        // Filter berdasarkan folder, search, dan tipe
+        let filtered = items.filter(item => {
+            if(currentFolder !== "Semua" && item.folder !== currentFolder) return false;
+            if(searchQuery !== "") {
+                const q = searchQuery.toLowerCase();
+                return item.title.toLowerCase().includes(q) || item.value.toLowerCase().includes(q);
+            }
+            return true;
+        });
+
+        if(typeFilter !== "semua") {
+            filtered = filtered.filter(item => item.type === typeFilter);
+        }
+
+        // Update stats
+        statsDisplay.innerHTML = `📊 ${filtered.length} item • Folder: ${currentFolder} ${searchQuery ? '• Pencarian: "'+searchQuery+'"' : ''}`;
+
+        if(filtered.length === 0) {
+            storageGrid.innerHTML = `<div class="empty-message">📭 Tidak ada item. Buat folder atau tambah item! 📭</div>`;
             return;
         }
+
         storageGrid.innerHTML = '';
-        items.forEach(item => {
+        filtered.forEach(item => {
             const card = document.createElement('div');
             card.className = 'item-card';
             let icon = item.type === 'teks' ? '📄' : (item.type === 'tautan' ? '🔗' : '💡');
             let displayValue = item.value;
             if(item.type === 'tautan' && (item.value.startsWith('http://') || item.value.startsWith('https://'))) {
-                displayValue = `<a href="${item.value}" target="_blank" style="color:#6bd4ff;">${item.value.substring(0, 50)}${item.value.length>50 ? '…' : ''}</a>`;
+                displayValue = `<a href="${item.value}" target="_blank" style="color:#6bd4ff;">${item.value.substring(0, 60)}${item.value.length>60 ? '…' : ''}</a>`;
             } else {
-                displayValue = item.value.length > 120 ? item.value.substring(0,120)+'…' : item.value;
+                displayValue = escapeHtml(item.value.length > 100 ? item.value.substring(0,100)+'…' : item.value);
             }
+
             card.innerHTML = `
-                <h4>${icon} ${escapeHtml(item.title)} 
+                <h4>
+                    <span>${icon} ${escapeHtml(item.title)}</span>
                     <button class="delete-item" data-id="${item.id}"><i class="fas fa-trash-alt"></i></button>
                 </h4>
-                <div class="item-content">${typeof displayValue === 'string' ? displayValue : item.value}</div>
-                <div class="item-meta"><i class="far fa-clock"></i> ${item.createdAt || 'baru'} • ${item.type}</div>
+                <div class="item-content">${displayValue}</div>
+                <div class="item-meta">
+                    <span><i class="far fa-folder"></i> ${item.folder === "Semua" ? '📁 Umum' : '📂 '+item.folder}</span>
+                    <span class="item-type-badge">${item.type}</span>
+                </div>
+                <div class="item-meta"><i class="far fa-clock"></i> ${item.createdAt || 'baru'}</div>
             `;
             storageGrid.appendChild(card);
         });
 
-        // event delete
         document.querySelectorAll('.delete-item').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const id = parseInt(btn.getAttribute('data-id'));
-                items = items.filter(i => i.id !== id);
-                saveItemsToLocal();
-                renderStorageGrid();
+                deleteItem(id);
             });
         });
     }
@@ -456,53 +708,31 @@
             if(m === '<') return '&lt;';
             if(m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
 
-    function addNewItem() {
-        let title = itemTitle.value.trim();
-        let type = itemType.value;
-        let value = itemValue.value.trim();
-        if(!title) {
-            alert("Judul tidak boleh kosong!");
-            return;
-        }
-        if(!value) {
-            alert("Konten tidak boleh kosong!");
-            return;
-        }
-        const newItem = {
-            id: Date.now(),
-            title: title,
-            type: type,
-            value: value,
-            createdAt: new Date().toLocaleString()
-        };
-        items.unshift(newItem);
-        saveItemsToLocal();
-        renderStorageGrid();
-        // reset form
-        itemTitle.value = '';
-        itemValue.value = '';
-        itemType.value = 'teks';
-    }
+    // Search & filter event
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderItems();
+    });
+    typeFilterEl.addEventListener('change', (e) => {
+        typeFilter = e.target.value;
+        renderItems();
+    });
 
-    // LOGIN system
+    // Auth
     function performLogin() {
-        const user = loginUsername.value.trim();
-        const pass = loginPassword.value.trim();
+        const user = document.getElementById('loginUsername').value.trim();
+        const pass = document.getElementById('loginPassword').value.trim();
         if(user === VALID_USERNAME && pass === VALID_PASSWORD) {
-            // login success
-            localStorage.setItem('limestone_auth', 'true');
+            localStorage.setItem('limestone_auth_v2', 'true');
             loginContainer.style.opacity = '0';
             loginContainer.style.visibility = 'hidden';
             setTimeout(() => {
                 loginContainer.style.display = 'none';
                 dashboard.style.display = 'block';
-                setTimeout(() => { dashboard.style.opacity = '1'; }, 20);
-                loadItemsFromStorage(); // muat data pribadi dari localstorage
+                loadData();
             }, 300);
         } else {
             loginError.style.display = 'block';
@@ -511,48 +741,31 @@
     }
 
     function logout() {
-        localStorage.removeItem('limestone_auth');
-        dashboard.style.opacity = '0';
-        setTimeout(() => {
-            dashboard.style.display = 'none';
-            loginContainer.style.display = 'flex';
-            setTimeout(() => {
-                loginContainer.style.opacity = '1';
-                loginContainer.style.visibility = 'visible';
-            }, 20);
-            loginUsername.value = '';
-            loginPassword.value = '';
-        }, 200);
+        localStorage.removeItem('limestone_auth_v2');
+        dashboard.style.display = 'none';
+        loginContainer.style.display = 'flex';
+        loginContainer.style.opacity = '1';
+        loginContainer.style.visibility = 'visible';
     }
 
-    // cek session saat halaman dimuat
     function checkAuth() {
-        const isAuth = localStorage.getItem('limestone_auth');
+        const isAuth = localStorage.getItem('limestone_auth_v2');
         if(isAuth === 'true') {
             loginContainer.style.display = 'none';
             dashboard.style.display = 'block';
-            dashboard.style.opacity = '1';
-            loadItemsFromStorage();
+            loadData();
         } else {
             loginContainer.style.display = 'flex';
             dashboard.style.display = 'none';
         }
     }
 
-    // event listeners
     loginBtn.addEventListener('click', performLogin);
     logoutBtn.addEventListener('click', logout);
-    saveItemBtn.addEventListener('click', addNewItem);
+    addFolderBtn.addEventListener('click', addFolder);
+    saveItemBtn.addEventListener('click', addItem);
+    document.getElementById('loginPassword').addEventListener('keypress', (e) => { if(e.key === 'Enter') performLogin(); });
 
-    // biar enter di login
-    loginPassword.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') performLogin();
-    });
-    loginUsername.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') performLogin();
-    });
-
-    // init
     checkAuth();
 </script>
 </body>
